@@ -52,9 +52,11 @@ try:
     files = get_files(mypath)
     for f in files:
         coor = get_coordinates(f, mypath)
-        print(coor)
+        print("Running file: " + f)
         n = 0
         for c in range(len(coor)):
+            print(c)
+
             if c == 0:
                 nextPos = (coor[c][0], coor[c][1])
             else:
@@ -71,16 +73,18 @@ try:
 
             MRot = threading.Thread(target=run_MRot, args=(nextPos[0], Rot_delay,))
             MLin = threading.Thread(target=run_MLin, args=(nextPos[1], Lin_delay,))
-            
+
             print("...")
             MRot.start()
             MLin.start()
-            
+
             MRot.join()
             MLin.join()
-            
+
             print("--------------------\n")
-            sleep(1)
+            sleep(0.5)
+
+        sleep(2)
 
 except KeyboardInterrupt:
     print("\nMotors stopped")
