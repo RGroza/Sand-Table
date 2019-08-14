@@ -60,13 +60,13 @@ try:
             else:
                 nextPos = (coor[c][0]-coor[c-1][0], coor[c][1]-coor[c-1][1])
             
-            elapsed_time = nextPos[0] / default_speed
-            if nextPos[1] / elapsed_time <= max_speed:
+            elapsed_time = abs(nextPos[0]) / default_speed
+            if abs(nextPos[1]) / elapsed_time <= max_speed:
                 Rot_delay = 1 / default_speed
-                Lin_delay = elapsed_time / nextPos[1]
+                Lin_delay = elapsed_time / abs(nextPos[1])
             else:
-                max_time = nextPos[1] / max_speed
-                Rot_delay = max_time / nextPos[0]
+                max_time = abs(nextPos[1]) / max_speed
+                Rot_delay = max_time / abs(nextPos[0])
                 Lin_delay = 1 / max_speed
 
             MRot = threading.Thread(target=run_MRot, args=(nextPos[0], Rot_delay,))
