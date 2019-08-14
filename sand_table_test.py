@@ -10,19 +10,19 @@ Motor1 = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
 Motor2 = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
 def run_MRot(num_steps, delay):
-    Motor1.SetMicroStep('software','halfstep')
+    Motor1.SetMicroStep('software','fullstep')
     if num_steps > 0:
-        Motor1.TurnStep(Dir='forward', steps=num_steps, stepdelay = 0.005)
+        Motor1.TurnStep(Dir='forward', steps=num_steps, stepdelay = delay)
     else:
-        Motor1.TurnStep(Dir='backward', steps=abs(num_steps), stepdelay = 0.005)
+        Motor1.TurnStep(Dir='backward', steps=abs(num_steps), stepdelay = delay)
     Motor1.Stop()
 
 def run_MLin(num_steps, delay):
-    Motor2.SetMicroStep('software','halfstep')
+    Motor2.SetMicroStep('software','fullstep')
     if num_steps > 0:
-        Motor2.TurnStep(Dir='forward', steps=num_steps, stepdelay = 0.005)
+        Motor2.TurnStep(Dir='forward', steps=num_steps, stepdelay = delay)
     else:
-        Motor2.TurnStep(Dir='backward', steps=abs(num_steps), stepdelay = 0.005)
+        Motor2.TurnStep(Dir='backward', steps=abs(num_steps), stepdelay = delay)
     Motor2.Stop()
 
 def get_files(mypath):
@@ -41,12 +41,12 @@ def get_coordinates(filename, mypath):
     for c in lines:
         coor.append((int(c[:c.find(" ")]), int(c[c.find(" ")+1:])))
 
-    return coor    
+    return coor
 
 mypath = "files/"
 
-default_speed = 200
-max_speed = 500
+default_speed = 100
+max_speed = 300
 
 try:
     files = get_files(mypath)
@@ -61,7 +61,7 @@ try:
                 nextPos = (coor[c][0], coor[c][1])
             else:
                 nextPos = (coor[c][0]-coor[c-1][0], coor[c][1]-coor[c-1][1])
-            
+
             elapsed_time = abs(nextPos[0]) / default_speed
             if abs(nextPos[1]) / elapsed_time <= max_speed:
                 Rot_delay = 1 / default_speed

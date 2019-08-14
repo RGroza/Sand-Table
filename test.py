@@ -17,11 +17,11 @@ try:
     # '1/16step': A cycle = 200 * 16 steps
     # '1/32step': A cycle = 200 * 32 steps
     """
-    Motor1.SetMicroStep('software','halfstep')
-    Motor1.TurnStep(Dir='forward', steps=200, stepdelay = 0.001)
+    Motor2.SetMicroStep('software','halfstep')
+    Motor2.TurnStep(Dir='forward', steps=3000, stepdelay = 0.001)
     time.sleep(0.5)
-    Motor1.TurnStep(Dir='backward', steps=400, stepdelay = 0.001)
-    Motor1.Stop()
+    Motor2.TurnStep(Dir='backward', steps=3000, stepdelay = 0.001)
+    Motor2.Stop()
     
     """
     # 28BJY-48:
@@ -34,9 +34,9 @@ try:
     # '1/32step': A cycle = 2048 * 32 steps
     """
     Motor2.SetMicroStep('software','fullstep')    
-    Motor2.TurnStep(Dir='forward', steps=200, stepdelay=0.001)
+    Motor2.TurnStep(Dir='forward', steps=3000, stepdelay=0.005)
     time.sleep(0.5)
-    Motor2.TurnStep(Dir='backward', steps=400, stepdelay=0.001)
+    Motor2.TurnStep(Dir='backward', steps=3000, stepdelay=0.005)
     Motor2.Stop()
     
 except """KeyboardInterrupt""":
