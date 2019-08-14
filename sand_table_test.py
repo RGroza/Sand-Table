@@ -55,7 +55,7 @@ try:
         print("Running file: " + f)
         n = 0
         for c in range(len(coor)):
-            print(c)
+            print(str(coor[c]))
 
             if c == 0:
                 nextPos = (coor[c][0], coor[c][1])
