@@ -14,23 +14,23 @@ ControlMode = [
 class DRV8825():
     def __init__(self, dir_pin, step_pin, enable_pin, mode_pins):
         self.dir_pin = dir_pin
-        self.step_pin = step_pin        
+        self.step_pin = step_pin
         self.enable_pin = enable_pin
         self.mode_pins = mode_pins
-        
+
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
         GPIO.setup(self.dir_pin, GPIO.OUT)
         GPIO.setup(self.step_pin, GPIO.OUT)
         GPIO.setup(self.enable_pin, GPIO.OUT)
         GPIO.setup(self.mode_pins, GPIO.OUT)
-        
+
     def digital_write(self, pin, value):
         GPIO.output(pin, value)
-        
+
     def Stop(self):
         self.digital_write(self.enable_pin, 1)
-    
+
     def SetMicroStep(self, mode, stepformat):
         """
         (1) mode
@@ -51,7 +51,7 @@ class DRV8825():
         if (mode == ControlMode[1]):
             print("set pins")
             self.digital_write(self.mode_pins, microstep[stepformat])
-        
+
     def TurnStep(self, stop_event, Dir, steps, stepdelay=0.005):
         if (Dir == MotorDir[0]):
             print("forward")
@@ -68,7 +68,7 @@ class DRV8825():
 
         if (steps == 0):
             return
-            
+
         print("turn step: ",steps)
         for i in range(steps):
             self.digital_write(self.step_pin, True)

@@ -84,8 +84,8 @@ try:
                 Rot_delay = max_time / abs(nextPos[0])
                 Lin_delay = 1 / max_speed
 
-            print("MRot speed: " + 1/Rot_delay)
-            print("MLin speed: " + 1/Lin_delay)
+            print("MRot speed: " + str(1/Rot_delay))
+            print("MLin speed: " + str(1/Lin_delay))
 
             MRot = threading.Thread(target=run_MRot, args=(nextPos[0], Rot_delay, threading_event,))
             MLin = threading.Thread(target=run_MLin, args=(nextPos[1], Lin_delay, threading_event,))
