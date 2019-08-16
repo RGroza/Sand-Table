@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 from DRV8825 import DRV8825
 import threading
 from time import sleep
+import keyboard
 
 from os import listdir
 from os.path import isfile, join
@@ -43,10 +44,20 @@ def get_coordinates(filename, mypath):
 
     return coor
 
+def stop_program():
+    MRot.join()
+    MLin.join()
+    print("\nMotors stopped")
+    Motor1.Stop()
+    Motor2.Stop()
+    GPIO.cleanup()
+    print("Exiting...")
+    exit()
+
 mypath = "files/"
 
-default_speed = 100
-max_speed = 300
+default_speed = 800
+max_speed = 1600
 
 try:
     threading_event = threading.Event()
@@ -72,12 +83,18 @@ try:
                 Rot_delay = max_time / abs(nextPos[0])
                 Lin_delay = 1 / max_speed
 
-            MRot = threading.Thread(target=run_MRot, args=(nextPos[0], Rot_delay,))
-            MLin = threading.Thread(target=run_MLin, args=(nextPos[1], Lin_delay,))
+            MRot = threading.Thread(target=run_MRot, args=(nextPos[0], Rot_delay, threading_event,))
+            MLin = threading.Thread(target=run_MLin, args=(nextPos[1], Lin_delay, threading_event,))
 
             print("...")
             MRot.start()
             MLin.start()
+
+            threads_running = True
+            while threads_running:
+                if keyboard.is_pressed('esc'):
+                    threading_event.set()
+                    stop_program()
 
             MRot.join()
             MLin.join()
@@ -88,14 +105,4 @@ try:
         sleep(2)
 
 except KeyboardInterrupt:
-    threading_event.set()
-
-    MRot.join()
-    MLin.join()
-
-    print("\nMotors stopped")
-    Motor1.Stop()
-    Motor2.Stop()
-    GPIO.cleanup()
-    print("Exiting...")
-    exit()
+    stop_program()

@@ -74,4 +74,5 @@ class DRV8825():
             self.digital_write(self.step_pin, True)
             time.sleep(stepdelay)
             self.digital_write(self.step_pin, False)
-            time.sleep(stepdelay)
+            if stop_event.wait(stepdelay):
+                return
