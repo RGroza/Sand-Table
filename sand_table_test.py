@@ -9,20 +9,20 @@ from os.path import isfile, join
 Motor1 = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
 Motor2 = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
-def run_MRot(num_steps, delay):
+def run_MRot(num_steps, delay, stop_event):
     Motor1.SetMicroStep('software','fullstep')
     if num_steps > 0:
-        Motor1.TurnStep(Dir='forward', steps=num_steps, stepdelay = delay)
+        Motor1.TurnStep(Dir='forward', steps=num_steps, stepdelay = delay, stop_event)
     else:
-        Motor1.TurnStep(Dir='backward', steps=abs(num_steps), stepdelay = delay)
+        Motor1.TurnStep(Dir='backward', steps=abs(num_steps), stepdelay = delay, stop_event)
     Motor1.Stop()
 
-def run_MLin(num_steps, delay):
+def run_MLin(num_steps, delay, stop_event):
     Motor2.SetMicroStep('software','fullstep')
     if num_steps > 0:
-        Motor2.TurnStep(Dir='forward', steps=num_steps, stepdelay = delay)
+        Motor2.TurnStep(Dir='forward', steps=num_steps, stepdelay = delay, stop_event)
     else:
-        Motor2.TurnStep(Dir='backward', steps=abs(num_steps), stepdelay = delay)
+        Motor2.TurnStep(Dir='backward', steps=abs(num_steps), stepdelay = delay, stop_event)
     Motor2.Stop()
 
 def get_files(mypath):
@@ -49,6 +49,7 @@ default_speed = 100
 max_speed = 300
 
 try:
+    threading_event = threading.Event()
     files = get_files(mypath)
     for f in files:
         coor = get_coordinates(f, mypath)
@@ -87,6 +88,11 @@ try:
         sleep(2)
 
 except KeyboardInterrupt:
+    threading_event.set()
+
+    MRot.join()
+    MLin.join()
+
     print("\nMotors stopped")
     Motor1.Stop()
     Motor2.Stop()
