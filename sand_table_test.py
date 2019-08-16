@@ -44,7 +44,8 @@ def get_coordinates(filename, mypath):
 
     return coor
 
-def stop_program():
+def stop_program(threading_event):
+    threading_event.set()
     MRot.join()
     MLin.join()
     print("\nMotors stopped")
@@ -56,8 +57,8 @@ def stop_program():
 
 mypath = "files/"
 
-default_speed = 800
-max_speed = 1600
+default_speed = 1000
+max_speed = 2000
 
 try:
     threading_event = threading.Event()
@@ -83,18 +84,15 @@ try:
                 Rot_delay = max_time / abs(nextPos[0])
                 Lin_delay = 1 / max_speed
 
+            print("MRot speed: " + 1/Rot_delay)
+            print("MLin speed: " + 1/Lin_delay)
+
             MRot = threading.Thread(target=run_MRot, args=(nextPos[0], Rot_delay, threading_event,))
             MLin = threading.Thread(target=run_MLin, args=(nextPos[1], Lin_delay, threading_event,))
 
             print("...")
             MRot.start()
             MLin.start()
-
-            threads_running = True
-            while threads_running:
-                if keyboard.is_pressed('esc'):
-                    threading_event.set()
-                    stop_program()
 
             MRot.join()
             MLin.join()
@@ -105,4 +103,4 @@ try:
         sleep(2)
 
 except KeyboardInterrupt:
-    stop_program()
+    stop_program(threading_event)
