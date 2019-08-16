@@ -13,17 +13,17 @@ Motor2 = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 def run_MRot(num_steps, delay, stop_event):
     Motor1.SetMicroStep('software','fullstep')
     if num_steps > 0:
-        Motor1.TurnStep(Dir='forward', steps=num_steps, stepdelay = delay, stop_event)
+        Motor1.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay = delay)
     else:
-        Motor1.TurnStep(Dir='backward', steps=abs(num_steps), stepdelay = delay, stop_event)
+        Motor1.TurnStep(stop_event, Dir='backward', steps=abs(num_steps), stepdelay = delay)
     Motor1.Stop()
 
 def run_MLin(num_steps, delay, stop_event):
     Motor2.SetMicroStep('software','fullstep')
     if num_steps > 0:
-        Motor2.TurnStep(Dir='forward', steps=num_steps, stepdelay = delay, stop_event)
+        Motor2.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay = delay)
     else:
-        Motor2.TurnStep(Dir='backward', steps=abs(num_steps), stepdelay = delay, stop_event)
+        Motor2.TurnStep(stop_event, Dir='backward', steps=abs(num_steps), stepdelay = delay)
     Motor2.Stop()
 
 def get_files(mypath):

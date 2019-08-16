@@ -52,7 +52,7 @@ class DRV8825():
             print("set pins")
             self.digital_write(self.mode_pins, microstep[stepformat])
         
-    def TurnStep(self, Dir, steps, stepdelay=0.005):
+    def TurnStep(self, stop_event, Dir, steps, stepdelay=0.005):
         if (Dir == MotorDir[0]):
             print("forward")
             self.digital_write(self.enable_pin, 0)
