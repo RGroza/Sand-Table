@@ -7,24 +7,24 @@ import keyboard
 from os import listdir
 from os.path import isfile, join
 
-Motor1 = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
-Motor2 = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
+M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
+M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
 def run_MRot(num_steps, delay, stop_event):
-    Motor1.SetMicroStep('software','fullstep')
+    M_Rot.SetMicroStep('software','fullstep')
     if num_steps > 0:
-        Motor1.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay = delay)
+        M_Rot.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay = delay)
     else:
-        Motor1.TurnStep(stop_event, Dir='backward', steps=abs(num_steps), stepdelay = delay)
-    Motor1.Stop()
+        M_Rot.TurnStep(stop_event, Dir='backward', steps=abs(num_steps), stepdelay = delay)
+    M_Rot.Stop()
 
 def run_MLin(num_steps, delay, stop_event):
-    Motor2.SetMicroStep('software','fullstep')
+    M_Lin.SetMicroStep('software','fullstep')
     if num_steps > 0:
-        Motor2.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay = delay)
+        M_Lin.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay = delay)
     else:
-        Motor2.TurnStep(stop_event, Dir='backward', steps=abs(num_steps), stepdelay = delay)
-    Motor2.Stop()
+        M_Lin.TurnStep(stop_event, Dir='backward', steps=abs(num_steps), stepdelay = delay)
+    M_Lin.Stop()
 
 def get_files(mypath):
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
@@ -49,8 +49,8 @@ def stop_program(threading_event):
     MRot.join()
     MLin.join()
     print("\nMotors stopped")
-    Motor1.Stop()
-    Motor2.Stop()
+    M_Rot.Stop()
+    M_Lin.Stop()
     GPIO.cleanup()
     print("Exiting...")
     exit()
