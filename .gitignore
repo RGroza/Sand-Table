@@ -1,2 +1,5 @@
-.pyc
-.save
+
+__pycache__/
+
+*.pyc
+*.save
