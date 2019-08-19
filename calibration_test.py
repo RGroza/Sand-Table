@@ -14,8 +14,8 @@ GPIO.setup(inner_switch, GPIO.IN)
 
 delay = 0.001
 pos = 0
-center_to_min = 50
-outer_to_max = 50
+center_to_min = 25
+outer_to_max = 25
 
 calibrated = False
 
