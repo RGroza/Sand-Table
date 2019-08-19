@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 from DRV8825 import DRV8825
 from time import sleep
+import random
 
 # M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
 M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
@@ -12,7 +13,10 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(outer_switch, GPIO.IN)
 GPIO.setup(inner_switch, GPIO.IN)
 
-delay = 1/1000
+delay_divider = 1000
+max_delay_divider = 1000
+min_delay_divider = 500
+delay = 1 / delay_divider
 pos = 0
 center_to_min = 20
 outer_to_max = 20
@@ -22,6 +26,11 @@ calibrated = False
 while not calibrated:
     minPos = M_Lin.Turn(Dir='backward', limit_switch=inner_switch, stepdelay=delay)
     maxPos = M_Lin.Turn(Dir='forward', limit_switch=outer_switch, stepdelay=delay) + minPos
+
+    rand_divider = randint(-10, 10)
+    if delay_divider + rand_divider >= 500 and delay_divider + rand_divider <= 1000:
+        delay_divider += rand_divider
+        delay = 1 / delay_divider
 
     positions = (minPos, maxPos)
     print(positions)
