@@ -19,7 +19,7 @@ outer_to_max = 50
 
 minPos = M_Lin.Turn(Dir='backward', limit_switch=inner_switch, stepdelay=delay)
 
-maxPos = M_Lin.Turn(Dir='forward', limit_switch=outer_switch, stepdelay=delay)
+maxPos = M_Lin.Turn(Dir='forward', limit_switch=outer_switch, stepdelay=delay) + minPos
 
 positions = (minPos, maxPos)
 print(positions)
