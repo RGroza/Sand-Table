@@ -129,7 +129,7 @@ class DRV8825():
             time.sleep(stepdelay)
             pos += 1
 
-        if Dir = MotorDir[0]:
+        if Dir == MotorDir[0]:
             return pos
         else:
             return -1*pos
