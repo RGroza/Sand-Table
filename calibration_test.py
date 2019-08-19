@@ -12,7 +12,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(outer_switch, GPIO.IN)
 GPIO.setup(inner_switch, GPIO.IN)
 
-delay = 1/5000
+delay = 1/2000
 pos = 0
 center_to_min = 20
 outer_to_max = 20
