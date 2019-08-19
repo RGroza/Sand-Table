@@ -53,7 +53,7 @@ try:
     threading_event = threading.Event()
     
     MRot = threading.Thread(target=run_MRot, args=delay,)
-    MLin = threading.Thread(target=calibrate, args=,)
+    MLin = threading.Thread(target=calibrate)
 
     print("...")
     MRot.start()
