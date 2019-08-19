@@ -17,19 +17,24 @@ pos = 0
 center_to_min = 80
 outer_to_max = 50
 
-minPos = M_Lin.Turn(Dir='backward', limit_switch=inner_switch, stepdelay=delay)
+calibrated = False
 
-maxPos = M_Lin.Turn(Dir='forward', limit_switch=outer_switch, stepdelay=delay) + minPos
+while not calibrated:
+    minPos = M_Lin.Turn(Dir='backward', limit_switch=inner_switch, stepdelay=delay)
+    maxPos = M_Lin.Turn(Dir='forward', limit_switch=outer_switch, stepdelay=delay) + minPos
 
-positions = (minPos, maxPos)
-print(positions)
-totalDist = maxPos - minPos - center_to_min - outer_to_max
-print ("Travel Distance: " + str(totalDist))
+    positions = (minPos, maxPos)
+    print(positions)
+    totalDist = maxPos - minPos - center_to_min - outer_to_max
+    print ("Travel Distance: " + str(totalDist))
 
-sleep(2)
+    sleep(2)
 
-test_inner = M_Lin.TurnStep_test(Dir='backward', steps=totalDist + outer_to_max, limit_switch=inner_switch, stepdelay=delay)
-minPos = 0
-sleep(2)
-test_outer = M_Lin.TurnStep_test(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
-maxPos = totalDist
+    test_inner = M_Lin.TurnStep_test(Dir='backward', steps=totalDist + outer_to_max, limit_switch=inner_switch, stepdelay=delay)
+    minPos = 0
+    sleep(2)
+    test_outer = M_Lin.TurnStep_test(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
+    maxPos = totalDist
+    if test_inner and test_outer:
+        calibrated = True
+print("Calibration Passed!")
