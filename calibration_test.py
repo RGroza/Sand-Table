@@ -14,7 +14,7 @@ GPIO.setup(inner_switch, GPIO.IN)
 
 delay = 0.001
 pos = 0
-center_to_min = 80
+center_to_min = 50
 outer_to_max = 50
 
 calibrated = False
@@ -37,4 +37,6 @@ while not calibrated:
     maxPos = totalDist
     if test_inner and test_outer:
         calibrated = True
+    else:
+        print("Calibration Failed! Trying again...")
 print("Calibration Passed!")
