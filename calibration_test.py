@@ -11,6 +11,8 @@ GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 delay = 0.001
 pos = 0
+center_to_min = 80
+outer_to_max = 50
 
 while GPIO.input(6) == 1:
     M_Lin.TurnStep_test(Dir='backward', steps=1, stepdelay=delay)
@@ -24,3 +26,8 @@ maxPos = pos
 
 positions = (minPos, maxPos)
 print(positions)
+totalDist = maxPos - minPos - center_to_min - outer_to_max
+print ("Travel Distance: " + totalDist)
+
+M_Lin.TurnStep_test(Dir='backward', steps=totalDist + outer_to_max, stepdelay=delay)
+M_Lin.TurnStep_test(Dir='forward', steps=totalDist, stepdelay=delay)
