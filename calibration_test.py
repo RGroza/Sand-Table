@@ -14,7 +14,7 @@ pos = 0
 center_to_min = 80
 outer_to_max = 50
 
-minPos = M_Lin.Turn(Dir='forward', limit_switch=5, stepdelay=delay)
+minPos = M_Lin.Turn(Dir='backward', limit_switch=5, stepdelay=delay)
 
 maxPos = M_Lin.Turn(Dir='forward', limit_switch=6, stepdelay=delay)
 
@@ -25,8 +25,8 @@ print ("Travel Distance: " + str(totalDist))
 
 sleep(2)
 
-test_inner = M_Lin.TurnStep_test(Dir='backward', steps=totalDist + outer_to_max, stepdelay=delay)
+test_inner = M_Lin.TurnStep_test(Dir='backward', steps=totalDist + outer_to_max, limit_switch=5, stepdelay=delay)
 minPos = 0
 sleep(2)
-test_outer = M_Lin.TurnStep_test(Dir='forward', steps=totalDist, stepdelay=delay)
+test_outer = M_Lin.TurnStep_test(Dir='forward', steps=totalDist, limit_switch=6, stepdelay=delay)
 maxPos = totalDist
