@@ -120,9 +120,6 @@ class DRV8825():
             self.digital_write(self.enable_pin, 1)
             return
 
-        if (steps == 0):
-            return
-
         # print("turn step: ",steps)
         pos = 0
         while GPIO.input(limit_switch) == 1:
