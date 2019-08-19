@@ -27,7 +27,9 @@ maxPos = pos
 positions = (minPos, maxPos)
 print(positions)
 totalDist = maxPos - minPos - center_to_min - outer_to_max
-print ("Travel Distance: " + totalDist)
+print ("Travel Distance: " + str(totalDist))
+
+sleep(2)
 
 M_Lin.TurnStep_test(Dir='backward', steps=totalDist + outer_to_max, stepdelay=delay)
 M_Lin.TurnStep_test(Dir='forward', steps=totalDist, stepdelay=delay)
