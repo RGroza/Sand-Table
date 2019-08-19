@@ -49,6 +49,17 @@ def calibrate():
             print("Calibration Failed! Trying again...")
     print("Calibration Passed!")    
 
+def stop_program(threading_event):
+    # threading_event.set()
+    MRot.join()
+    MLin.join()
+    print("\nMotors stopped")
+    M_Rot.Stop()
+    M_Lin.Stop()
+    GPIO.cleanup()
+    print("Exiting...")
+    exit()
+
 try:
     threading_event = threading.Event()
     
@@ -61,3 +72,5 @@ try:
 
     MRot.join()
     MLin.join()
+except KeyboardInterrupt:
+    stop_program(threading_event)
