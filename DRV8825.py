@@ -96,7 +96,7 @@ class DRV8825():
 
         # print("turn step: ",steps)
         while steps > 0:
-            if GPIO.input(limit_switch) == 1:
+            if GPIO.input(limit_switch) == 0:
                 return False
             self.digital_write(self.step_pin, True)
             time.sleep(stepdelay)
