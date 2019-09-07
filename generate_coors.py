@@ -10,4 +10,4 @@ def get_files(mypath):
 def generate_coordinates(mypath, fileName, thetaStep, funcRange):
     theta = funcRange[0]
 
-    f=open("file{}.txt".format(str(num)))
+    #f=open("file{}.txt".format(str(num)))
