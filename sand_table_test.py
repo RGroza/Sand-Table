@@ -115,12 +115,12 @@ try:
                 nextPos = (coor[c][0]-coor[c-1][0], coor[c][1]-coor[c-1][1])
 
             elapsed_time = abs(nextPos[0]) / default_speed
-            if abs(nextPos[1]) / elapsed_time <= max_speed:
+            if elapsed_time > 0 and abs(nextPos[1]) / elapsed_time <= max_speed:
                 Rot_delay = 1 / default_speed
-                Lin_delay = elapsed_time / abs(nextPos[1])
+                Lin_delay = elapsed_time / abs(nextPos[1]) if nextPos[1] != 0 else Lin_delay = 0
             else:
                 max_time = abs(nextPos[1]) / max_speed
-                Rot_delay = max_time / abs(nextPos[0])
+                Rot_delay = max_time / abs(nextPos[0]) if nextPos[0] != 0 else Rot_delay = 0
                 Lin_delay = 1 / max_speed
 
             print("MRot speed: " + str(1/Rot_delay))
