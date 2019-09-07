@@ -117,14 +117,16 @@ try:
             elapsed_time = abs(nextPos[0]) / default_speed
             if elapsed_time > 0 and abs(nextPos[1]) / elapsed_time <= max_speed:
                 Rot_delay = 1 / default_speed
-                Lin_delay = elapsed_time / abs(nextPos[1]) if nextPos[1] != 0 else Lin_delay = 0
+                Lin_delay = elapsed_time / abs(nextPos[1]) if nextPos[1] != 0 else None
             else:
                 max_time = abs(nextPos[1]) / max_speed
-                Rot_delay = max_time / abs(nextPos[0]) if nextPos[0] != 0 else Rot_delay = 0
+                Rot_delay = max_time / abs(nextPos[0]) if nextPos[0] != 0 else None
                 Lin_delay = 1 / max_speed
 
-            print("MRot speed: " + str(1/Rot_delay))
-            print("MLin speed: " + str(1/Lin_delay))
+            Rot_speed = 1/Rot_delay if Rot_delay != None else "0"
+            Lin_speed = 1/Lin_delay if Lin_delay != None else "0"
+            print("MRot speed: " + str(Rot_speed))
+            print("MLin speed: " + str(Lin_speed))
 
             MRot = threading.Thread(target=run_MRot, args=(nextPos[0], Rot_delay, threading_event,))
             MLin = threading.Thread(target=run_MLin, args=(nextPos[1], Lin_delay, threading_event,))
