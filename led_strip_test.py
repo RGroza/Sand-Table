@@ -55,9 +55,9 @@ while True:
     #pixels.fill((255, 0, 0))
     # Uncomment this line if you have RGBW/GRBW NeoPixels
     # pixels.fill((255, 0, 0, 0))
-    pixel[0] = (100, 0, 0)
-    pixel[1] = (0, 100, 0)
-    pixel[2] = (0, 0, 100)
+    pixels[0] = (100, 0, 0)
+    pixels[1] = (0, 100, 0)
+    pixels[2] = (0, 0, 100)
     pixels.show()
     time.sleep(1)
 
@@ -65,9 +65,9 @@ while True:
     pixels.fill((0, 255, 0))
     # Uncomment this line if you have RGBW/GRBW NeoPixels
     # pixels.fill((0, 255, 0, 0))
-    pixel[0] = (200, 0, 0)
-    pixel[1] = (0, 200, 0)
-    pixel[2] = (0, 0, 200)
+    pixels[0] = (200, 0, 0)
+    pixels[1] = (0, 200, 0)
+    pixels[2] = (0, 0, 200)
     pixels.show()
     time.sleep(1)
 
@@ -75,9 +75,9 @@ while True:
     pixels.fill((0, 0, 255))
     # Uncomment this line if you have RGBW/GRBW NeoPixels
     # pixels.fill((0, 0, 255, 0))
-    pixel[0] = (50, 0, 0)
-    pixel[1] = (0, 50, 0)
-    pixel[2] = (0, 0, 50)
+    pixels[0] = (50, 0, 0)
+    pixels[1] = (0, 50, 0)
+    pixels[2] = (0, 0, 50)
     pixels.show()
     time.sleep(1)
 
