@@ -137,9 +137,9 @@ try:
             MLin.join()
 
             print("--------------------\n")
-            sleep(0.5)
+            #sleep(0.5)
 
-        sleep(2)
+        #sleep(2)
 
 except KeyboardInterrupt:
     stop_program(threading_event)
