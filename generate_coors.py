@@ -14,9 +14,9 @@ def generate_coordinates(mypath, coor_amt, revs):
     rev_steps = 3200
     arm_length = 1900
     currentTheta = 0
-    theta_steps = round(revs * rev_steps / coor_amt)
+    theta_steps = round(rev_steps / coor_amt)
 
-    for i in range(coor_amt):
+    for i in range(revs * coor_amt):
         funcResult = round(arm_length * abs(math.cos(math.radians(360 * currentTheta / rev_steps))))
         f.write(str(currentTheta) + " " + str(funcResult) + "\n")
         currentTheta += theta_steps
