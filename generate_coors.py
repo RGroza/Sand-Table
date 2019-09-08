@@ -22,4 +22,4 @@ def generate_coordinates(mypath, coor_amt, revs):
         currentTheta += theta_steps
     print("Done!")
 
-generate_coordinates("files/", 200, 3)
+generate_coordinates("files/", 100, 3)
