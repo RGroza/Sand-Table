@@ -95,8 +95,8 @@ def stop_program(threading_event):
 
 mypath = "files/"
 
-default_speed = 1000
-max_speed = 2000
+default_speed = 750
+max_speed = 1000
 
 try:
     #maxDisp = calibrate_slide()
