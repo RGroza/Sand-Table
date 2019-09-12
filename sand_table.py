@@ -11,7 +11,7 @@ M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
 M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
 def run_MRot(num_steps, delay, stop_event):
-    M_Rot.SetMicroStep('software','fullstep')
+    M_Rot.SetMicroStep('software','1/4step')
     if num_steps > 0:
         M_Rot.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay = delay)
     else:
@@ -19,7 +19,7 @@ def run_MRot(num_steps, delay, stop_event):
     M_Rot.Stop()
 
 def run_MLin(num_steps, delay, stop_event):
-    M_Lin.SetMicroStep('software','fullstep')
+    M_Lin.SetMicroStep('software','1/4step')
     if num_steps > 0:
         M_Lin.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay = delay)
     else:
@@ -113,14 +113,17 @@ try:
             else:
                 nextPos = (coor[c][0]-coor[c-1][0], coor[c][1]-coor[c-1][1])
 
-            elapsed_time = abs(nextPos[0]) / default_speed
-            if elapsed_time > 0 and abs(nextPos[1]) / elapsed_time <= max_speed:
-                Rot_delay = 1 / default_speed
-                Lin_delay = elapsed_time / abs(nextPos[1]) if nextPos[1] != 0 else None
-            else:
-                max_time = abs(nextPos[1]) / max_speed
-                Rot_delay = max_time / abs(nextPos[0]) if nextPos[0] != 0 else None
-                Lin_delay = 1 / max_speed
+            # elapsed_time = abs(nextPos[0]) / default_speed
+            # if elapsed_time > 0 and abs(nextPos[1]) / elapsed_time <= max_speed:
+            #     Rot_delay = 1 / default_speed
+            #     Lin_delay = elapsed_time / abs(nextPos[1]) if nextPos[1] != 0 else None
+            # else:
+            #     max_time = abs(nextPos[1]) / max_speed
+            #     Rot_delay = max_time / abs(nextPos[0]) if nextPos[0] != 0 else None
+            #     Lin_delay = 1 / max_speed
+
+            Rot_delay = 0.00125
+            Lin_delay = 0.00125
 
             Rot_speed = 1/Rot_delay if Rot_delay != None else "0"
             Lin_speed = 1/Lin_delay if Lin_delay != None else "0"
