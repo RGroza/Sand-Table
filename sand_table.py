@@ -53,7 +53,6 @@ def calibrate_slide():
     GPIO.setup(inner_switch, GPIO.IN)
 
     delay = 1 / 1000
-    pos = 0
     center_to_min = 20
     outer_to_max = 20
 
@@ -70,10 +69,10 @@ def calibrate_slide():
 
         sleep(2)
 
-        test_inner = M_Lin.TurnStep_test(Dir='backward', steps=totalDist + outer_to_max, limit_switch=inner_switch, stepdelay=delay)
+        test_inner = M_Lin.TurnStep_cali(Dir='backward', steps=totalDist + outer_to_max, limit_switch=inner_switch, stepdelay=delay)
         minPos = 0
         sleep(2)
-        test_outer = M_Lin.TurnStep_test(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
+        test_outer = M_Lin.TurnStep_cali(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
         maxPos = totalDist
         if test_inner and test_outer:
             calibrated = True
