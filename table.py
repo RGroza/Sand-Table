@@ -89,21 +89,22 @@ default_speed = 750
 max_speed = 1000
 rev_steps = 3200
 currentTheta = 0 # theta coordinate val - currently just incrementer
-theta_steps = 32
+theta_steps = 100
 LinPos = 0
 LastLinPos = 0
 Lin_delay = 0.00125
 
 try:
-    maxDisp = calibrate_slide()
+    maxDisp = calibrate_slide() - 50
     threading_event = threading.Event()
     isStillMoving = True
 
     # start Rotation
     MRot = threading.Thread(target=run_MRotate, args=(threading_event,))
-    
+    MRot.start()
+    print("\nROT Thread Started")
     while isStillMoving:
-        LinPos = LastLinPos
+        LastLinPos = ListPos
         LinPos = round(maxDisp * abs(math.cos(math.radians(360 * currentTheta / rev_steps)))) # r coordinate val
         currentTheta += theta_steps
 
