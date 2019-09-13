@@ -8,6 +8,8 @@ import keyboard
 from os import listdir
 from os.path import isfile, join
 
+GPIO.cleanup()
+
 M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
 M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
@@ -66,11 +68,14 @@ def calibrate_slide():
         sleep(2)
         test_outer = M_Lin.TurnStep_cali(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
         maxPos = totalDist
+        test_inner = M_Lin.TurnStep_cali(Dir='backward', steps=totalDist, limit_switch=inner_switch, stepdelay=delay)
+
         if test_inner and test_outer:
             calibrated = True
         else:
             print("Calibration Failed! Trying again...")
     print("Calibration Passed!")
+
     return totalDist
 
 def stop_program(threading_event):
