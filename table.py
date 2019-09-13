@@ -15,7 +15,7 @@ isStillMoving = False #flag that motors are to be moving
 
 def run_MRotate(stop_event):
     M_Rot.SetMicroStep('software','1/4step')
-    rot_delay = 0.00125
+    rot_delay = 0.001
     rot_steps = 3200
     while isStillMoving:
         M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay = rot_delay)
