@@ -8,8 +8,6 @@ import keyboard
 from os import listdir
 from os.path import isfile, join
 
-GPIO.cleanup()
-
 M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
 M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
@@ -17,8 +15,8 @@ isStillMoving = False #flag that motors are to be moving
 
 def run_MRotate(stop_event):
     M_Rot.SetMicroStep('software','1/4step')
-    rot_delay = 0.0125
-    rot_steps = 1000
+    rot_delay = 0.00125
+    rot_steps = 3200
     while isStillMoving:
         M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay = rot_delay)
     M_Rot.Stop()
