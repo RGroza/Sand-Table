@@ -104,7 +104,7 @@ try:
     MRot.start()
     print("\nROT Thread Started")
     while isStillMoving:
-        LastLinPos = ListPos
+        LastLinPos = LinPos
         LinPos = round(maxDisp * abs(math.cos(math.radians(360 * currentTheta / rev_steps)))) # r coordinate val
         currentTheta += theta_steps
 
