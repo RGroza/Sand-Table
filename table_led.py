@@ -205,7 +205,7 @@ try:
     LStrip = threading.Thread(target=run_LedStrip, args=(threading_event,))
     MRot.start()
     print("\nROT Thread Started")
-    LStrip.Start()
+    LStrip.start()
     print("\nLed Strip Thread Started")
 
     while isStillMoving:
