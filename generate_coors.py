@@ -39,14 +39,23 @@ def plotting_coordinates(mypath, file_name, coor_amt, revs, max_amp):
 
     for i in range(revs):
         for i in range(coor_amt):
-            funcResult = round(max_disp * abs(math.cos(math.radians(360 * currentTheta / rev_steps)))) # r coordinate val
+            # funcResult = round(max_disp * abs(math.sin(math.radians(360 * currentTheta / rev_steps)))) # r coordinate val
+            deg = 360 * currentTheta / rev_steps
+            if deg >= 0 and deg < 45 or deg > 315 and deg <= 360:
+                funcResult = round(max_disp / math.cos(math.radians(deg))) # r coordinate val
+            elif deg > 45 and deg < 135:
+                funcResult = round(max_disp / math.sin(math.radians(deg))) # r coordinate val
+            elif deg > 135 and deg < 225:
+                funcResult = round(-max_disp / math.cos(math.radians(deg))) # r coordinate val
+            else:# deg > 215 and deg < 315:
+                funcResult = round(-max_disp / math.sin(math.radians(deg))) # r coordinate val
 
-            f.write("\left(" + str(funcResult) + "\cos\left(" + str(round(360*(currentTheta / rev_steps), 1)) + "\\right),\ "
-                             + str(funcResult) + "\sin\left(" + str(round(360*(currentTheta / rev_steps), 1)) +  "\\right)\\right)\n")
+            f.write("\left(" + str(funcResult) + "\cos\left(" + str(round((deg), 1)) + "\\right),\ "
+                             + str(funcResult) + "\sin\left(" + str(round((deg), 1)) +  "\\right)\\right)\n")
 
             currentTheta += theta_steps
         currentTheta = 0
     print("Done!")
 
 #stepper_coordinates("files/", "testfile.txt", 100, 1)
-plotting_coordinates("files/", "testfile.txt", 100, 1, 100)
+plotting_coordinates("files/", "testfile2.txt", 100, 1, 100)
