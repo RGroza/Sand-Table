@@ -9,7 +9,7 @@ def get_files(mypath):
     return onlyfiles
 
 # Generates coordinates that are interpreted by the main program
-def stepper_coordinates(mypath, file_name, coor_amt, revs):
+def stepper_coors(mypath, file_name, coor_amt, revs):
     f = open(mypath + file_name, "w")
 
     rev_steps = 3200
@@ -23,25 +23,39 @@ def stepper_coordinates(mypath, file_name, coor_amt, revs):
         currentTheta += theta_steps
     print("Done!")
 
-def simple_square(deg, max_amp):
-    if deg > 360:
-        deg -= 360
+def simple_square(amp, theta):
+    if theta > 360:
+        theta -= 360
 
-    if deg >= 0 and deg < 45 or deg > 315 and deg <= 360:
-        funcResult = round(max_amp / math.cos(math.radians(deg)))
-    elif deg > 45 and deg < 135:
-        funcResult = round(max_amp / math.sin(math.radians(deg)))
-    elif deg > 135 and deg < 225:
-        funcResult = round(-max_amp / math.cos(math.radians(deg)))
+    if theta >= 0 and theta < 45 or theta > 315 and theta <= 360:
+        funcResult = round(amp / math.cos(math.radians(theta)))
+    elif theta > 45 and theta < 135:
+        funcResult = round(amp / math.sin(math.radians(theta)))
+    elif theta > 135 and theta < 225:
+        funcResult = round(-amp / math.cos(math.radians(theta)))
     else:
-        funcResult = round(-max_amp / math.sin(math.radians(deg)))
+        funcResult = round(-amp / math.sin(math.radians(theta)))
     return funcResult
 
-# def square_spiral(deg, max_amp, layers):
-#     amp = max_amp
-#     layer_sep = round(max_amp / layers)
-#     for l in layers:
-#         for n in range(3):
+def square_spiral(amp, theta, layers):
+    rel_theta = theta % 360 # relative theta angle
+    layer_sep = round(amp / layers)
+    current_amp = layer_sep * math.trunc(theta / 360) + 1
+    thresh_angle = 270 + math.atan(current_amp + layer_sep / current_amp) # bottom-right corner angle
+
+    if rel_theta >= 0 and rel_theta < 45:
+        funcResult = round(current_amp / math.cos(math.radians(rel_theta)))
+    elif rel_theta >= 45 and rel_theta < 135:
+        funcResult = round(current_amp / math.sin(math.radians(rel_theta)))
+    elif rel_theta >= 135 and rel_theta < 225:
+        funcResult = round(-current_amp / math.cos(math.radians(rel_theta)))
+    elif rel_theta >= 225 and rel_theta < 270:
+        funcResult = round(-current_amp / math.sin(math.radians(rel_theta)))
+    elif rel_theta >= thresh_angle and rel_theta <= 360:
+        funcResult = round(current_amp / math.cos(math.radians(rel_theta)))
+    else:
+        funcResult = round(-current_amp / math.sin(math.radians(rel_theta)))
+    return funcResult
 
 # Generates coordinates that can be plotted by desmos
 # mypath: location of file created
@@ -49,7 +63,7 @@ def simple_square(deg, max_amp):
 # coor_amt: num of coor per rev
 # revs: num of revs
 # max_amp: max amplitude of the function
-def plotting_coordinates(mypath, file_name, coor_amt, revs, max_amp):
+def plotting_coors(mypath, file_name, coor_amt, max_amp, revs):
     f = open(mypath + file_name, "w")
 
     rev_steps = 3200 # default sand table mechanism setting for steps per rev
@@ -58,7 +72,8 @@ def plotting_coordinates(mypath, file_name, coor_amt, revs, max_amp):
 
     for i in range(revs * coor_amt):
         deg = 360 * currentTheta / rev_steps
-        funcResult = simple_square(deg, max_amp) # r coordinate val
+        funcResult = simple_square(max_amp, deg) # r coordinate val
+        # funcResult = square_spiral(max_amp, deg, 100)
 
         f.write("\left(" + str(funcResult) + "\cos\left(" + str(round((deg), 1)) + "\\right),\ "
                             + str(funcResult) + "\sin\left(" + str(round((deg), 1)) +  "\\right)\\right)\n")
@@ -66,5 +81,5 @@ def plotting_coordinates(mypath, file_name, coor_amt, revs, max_amp):
         currentTheta += theta_steps
     print("Done!")
 
-#stepper_coordinates("files/", "testfile.txt", 100, 1)
-plotting_coordinates("files/", "testfile2.txt", 200, 2, 100)
+#stepper_coors("files/", "testfile.txt", 100, 1)
+plotting_coors("files/", "testfile.txt", 300, 100, 1)
