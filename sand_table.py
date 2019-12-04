@@ -1,49 +1,61 @@
 import RPi.GPIO as GPIO
 from DRV8825 import DRV8825
 import threading
+import math
 from time import sleep
 import keyboard
 
-from os import listdir
-from os.path import isfile, join
+import led_strip # from led_strip.py
 
+
+isStillMoving = False # Flag whether motors are to be moving
+
+
+# Motor driver object init
 M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
 M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
-def run_MRot(num_steps, delay, stop_event):
+# Create NeoPixel object with appropriate configuration.
+strip = led_strip.strip_init()
+
+
+# Run through the LED strip routine
+def run_LedStrip(stop_event):
+    strip.begin()
+
+    while isStillMoving:
+        print('Color wipe animations.')
+        led_strip.colorWipe(strip, Color(255, 0, 0))  # Red wipe
+        led_strip.colorWipe(strip, Color(0, 255, 0))  # Blue wipe
+        led_strip.colorWipe(strip, Color(0, 0, 255))  # Green wipe
+        print('Theater chase animations.')
+        led_strip.theaterChase(strip, Color(127, 127, 127))  # White theater chase
+        led_strip.theaterChase(strip, Color(127, 0, 0))  # Red theater chase
+        led_strip.theaterChase(strip, Color(0, 0, 127))  # Blue theater chase
+        print('Rainbow animations.')
+        led_strip.rainbow(strip)
+        led_strip.rainbowCycle(strip)
+        led_strip.theaterChaseRainbow(strip)
+
+
+# Functions defined for each motor thread
+def run_MRotate(stop_event):
     M_Rot.SetMicroStep('software','1/4step')
-    if num_steps > 0:
-        M_Rot.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay = delay)
-    else:
-        M_Rot.TurnStep(stop_event, Dir='backward', steps=abs(num_steps), stepdelay = delay)
+    rot_delay = 0.0015
+    rot_steps = 3200
+    while isStillMoving:
+        M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay = rot_delay)
     M_Rot.Stop()
 
-def run_MLin(num_steps, delay, stop_event):
+def run_MLinear(num_steps, delay, stop_event):
     M_Lin.SetMicroStep('software','1/4step')
     if num_steps > 0:
         M_Lin.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay = delay)
     else:
         M_Lin.TurnStep(stop_event, Dir='backward', steps=abs(num_steps), stepdelay = delay)
-    M_Lin.Stop()
 
-def get_files(mypath):
-    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-    print("Files found: " + str(onlyfiles).replace('[', '').replace(']', ''))
 
-    return onlyfiles
-
-def get_coordinates(filename, mypath):
-    with open(mypath + filename, "r") as f:
-        content = f.readlines()
-
-    lines = [line.rstrip('\n') for line in content]
-
-    coor = []
-    for c in lines:
-        coor.append((int(c[:c.find(" ")]), int(c[c.find(" ")+1:])))
-
-    return coor
-
+# Calibrates the linear slide arm before starting the main program routine
 def calibrate_slide():
     outer_switch = 5
     inner_switch = 6
@@ -74,76 +86,77 @@ def calibrate_slide():
         sleep(2)
         test_outer = M_Lin.TurnStep_cali(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
         maxPos = totalDist
+        test_inner = M_Lin.TurnStep_cali(Dir='backward', steps=totalDist, limit_switch=inner_switch, stepdelay=delay)
+
         if test_inner and test_outer:
             calibrated = True
         else:
             print("Calibration Failed! Trying again...")
     print("Calibration Passed!")
+
     return totalDist
 
+
+# Stops the motors and LED strip, and joins the threads
 def stop_program(threading_event):
     threading_event.set()
+    isStillMoving = False
+    colorWipe(strip, Color(0, 0, 0), 10)
     MRot.join()
-    MLin.join()
+    LStrip.join()
+    #MLin.join()
     print("\nMotors stopped")
     M_Rot.Stop()
-    M_Lin.Stop()
+    #M_Lin.Stop()
     GPIO.cleanup()
     print("Exiting...")
     exit()
 
-mypath = "files/"
 
-default_speed = 750
-max_speed = 1000
+# Create a function and return the linear postion for the arm (r coordinate val)
+def draw_function(maxDisp, currentTheta, rev_steps):
+    # Function that can be modified to create different patterns
+    pos = round(maxDisp * abs(math.cos(math.radians(360 * currentTheta / rev_steps))))
+    return pos
 
-try:
-    #maxDisp = calibrate_slide()
-    threading_event = threading.Event()
-    files = get_files(mypath)
-    for f in files:
-        coor = get_coordinates(f, mypath)
-        print("Running file: " + f)
-        n = 0
-        for c in range(len(coor)):
-            print(str(coor[c]))
 
-            if c == 0:
-                nextPos = (coor[c][0], coor[c][1])
-            else:
-                nextPos = (coor[c][0]-coor[c-1][0], coor[c][1]-coor[c-1][1])
+# Main function for the program
+def main():
+    # Sand Table hardware constants
+    default_speed = 750
+    max_speed = 1000
+    rev_steps = 3200
 
-            # elapsed_time = abs(nextPos[0]) / default_speed
-            # if elapsed_time > 0 and abs(nextPos[1]) / elapsed_time <= max_speed:
-            #     Rot_delay = 1 / default_speed
-            #     Lin_delay = elapsed_time / abs(nextPos[1]) if nextPos[1] != 0 else None
-            # else:
-            #     max_time = abs(nextPos[1]) / max_speed
-            #     Rot_delay = max_time / abs(nextPos[0]) if nextPos[0] != 0 else None
-            #     Lin_delay = 1 / max_speed
+    currentTheta = 0 # Theta coordinate val - currently just an incrementer
+    theta_steps = 100
+    LinPos = 0
+    LastLinPos = 0
+    Lin_delay = 0.00125
 
-            Rot_delay = 0.00125
-            Lin_delay = 0.00125
+    try:
+        maxDisp = calibrate_slide() - 50
+        threading_event = threading.Event()
+        isStillMoving = True
 
-            Rot_speed = 1/Rot_delay if Rot_delay != None else "0"
-            Lin_speed = 1/Lin_delay if Lin_delay != None else "0"
-            print("MRot speed: " + str(Rot_speed))
-            print("MLin speed: " + str(Lin_speed))
+        # Start rotation, split into 3 threads (the main thread will process linear movements for MLin)
+        MRot = threading.Thread(target=run_MRotate, args=(threading_event,))
+        LStrip = threading.Thread(target=run_LedStrip, args=(threading_event,))
+        MRot.start()
+        print("\nROT Thread Started")
+        LStrip.start()
+        print("\nLed Strip Thread Started")
 
-            MRot = threading.Thread(target=run_MRot, args=(nextPos[0], Rot_delay, threading_event,))
-            MLin = threading.Thread(target=run_MLin, args=(nextPos[1], Lin_delay, threading_event,))
+        while isStillMoving:
+            LastLinPos = LinPos
+            LinPos = draw_function(maxDisp, currentTheta, rev_steps) # Set the LinPos to the calculated position
+            currentTheta += theta_steps
 
-            print("...")
-            MRot.start()
-            MLin.start()
+            print(str(LinPos))
 
-            MRot.join()
-            MLin.join()
+            nextPos = LinPos - LastLinPos
+            run_MLinear(nextPos, Lin_delay, threading_event,)
 
-            print("--------------------\n")
-            #sleep(0.5)
+    except KeyboardInterrupt:
+        stop_program(threading_event)
 
-        #sleep(2)
-
-except KeyboardInterrupt:
-    stop_program(threading_event)
+main()
