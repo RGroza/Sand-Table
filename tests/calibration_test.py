@@ -46,3 +46,5 @@ def calibrate_slide():
     return totalDist
 
 calibrate_slide()
+M_Lin.Stop()
+GPIO.cleanup()
