@@ -25,9 +25,18 @@ def run_MLin(num_steps, delay):
 
 coors = [0, 500, 1000]
 
-for c in range(len(coors)):
-    if c == 0:
-        nextPos = coors[c]
-    else:
-        nextPos = coors[c]-coors[c-1]
-    run_MLin(nextPos, 1/500)
+try:
+    for c in range(len(coors)):
+        if c == 0:
+            nextPos = coors[c]
+        else:
+            nextPos = coors[c]-coors[c-1]
+        run_MRot(nextPos, 1/1000)
+        run_MLin(nextPos, 1/1000)
+except KeyboardInterrupt:
+    print("\nMotors stopped")
+    M_Rot.Stop()
+    M_Lin.Stop()
+    GPIO.cleanup()
+    print("Exiting...")
+    exit()
