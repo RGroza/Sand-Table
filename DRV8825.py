@@ -104,6 +104,33 @@ class DRV8825():
 
         return True
 
+    def TurnStep_test(self, Dir, steps, stepdelay=0.005):
+        if (Dir == MotorDir[0]):
+            # print("forward")
+            self.digital_write(self.enable_pin, 0)
+            self.digital_write(self.dir_pin, 0)
+        elif (Dir == MotorDir[1]):
+            # print("backward")
+            self.digital_write(self.enable_pin, 0)
+            self.digital_write(self.dir_pin, 1)
+        else:
+            # print("the dir must be : 'forward' or 'backward'")
+            self.digital_write(self.enable_pin, 1)
+            return
+
+        if (steps == 0):
+            return
+
+        # print("turn step: ",steps)
+        while steps > 0:
+            self.digital_write(self.step_pin, True)
+            time.sleep(stepdelay)
+            self.digital_write(self.step_pin, False)
+            time.sleep(stepdelay)
+            steps -= 1
+
+        return True
+
     def Turn_until_switch(self, Dir, limit_switch, stepdelay=0.005):
         if (Dir == MotorDir[0]):
             # print("forward")
