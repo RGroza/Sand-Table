@@ -42,7 +42,7 @@ def run_LedStrip(stop_event):
 def run_MRotate(stop_event):
     M_Rot.SetMicroStep('software','1/4step')
     rot_delay = 0.0015
-    rot_steps = 3200
+    rot_steps = 3200 # One full revolution
     while isStillMoving:
         M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay = rot_delay)
     M_Rot.Stop()
@@ -123,8 +123,6 @@ def draw_function(maxDisp, currentTheta, rev_steps):
 # Main function for the program
 def main():
     # Sand Table hardware constants
-    default_speed = 750
-    max_speed = 1000
     rev_steps = 3200
 
     currentTheta = 0 # Theta coordinate val - currently just an incrementer
