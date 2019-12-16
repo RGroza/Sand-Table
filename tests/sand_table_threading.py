@@ -83,8 +83,8 @@ def calibrate_slide():
     calibrated = False
 
     while not calibrated:
-        minPos = M_Lin.Turn(Dir='backward', limit_switch=inner_switch, stepdelay=delay)
-        maxPos = M_Lin.Turn(Dir='forward', limit_switch=outer_switch, stepdelay=delay) + minPos
+        minPos = M_Lin.Turn_until_switch(Dir='backward', limit_switch=inner_switch, stepdelay=delay)
+        maxPos = M_Lin.Turn_until_switch(Dir='forward', limit_switch=outer_switch, stepdelay=delay) + minPos
 
         positions = (minPos, maxPos)
         print(positions)
@@ -93,12 +93,12 @@ def calibrate_slide():
 
         sleep(2)
 
-        test_inner = M_Lin.TurnStep_cali(Dir='backward', steps=totalDist + outer_to_max, limit_switch=inner_switch, stepdelay=delay)
+        test_inner = M_Lin.Turn_check_cali(Dir='backward', steps=totalDist + outer_to_max, limit_switch=inner_switch, stepdelay=delay)
         minPos = 0
         sleep(2)
-        test_outer = M_Lin.TurnStep_cali(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
+        test_outer = M_Lin.Turn_check_cali(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
         maxPos = totalDist
-        test_inner = M_Lin.TurnStep_cali(Dir='backward', steps=totalDist, limit_switch=inner_switch, stepdelay=delay)
+        test_inner = M_Lin.Turn_check_cali(Dir='backward', steps=totalDist, limit_switch=inner_switch, stepdelay=delay)
 
         if test_inner and test_outer:
             calibrated = True
