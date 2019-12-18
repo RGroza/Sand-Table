@@ -16,7 +16,7 @@ M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
 M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
 # Create NeoPixel object with appropriate configuration.
-strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
+strip = led_strip.strip_init()
 
 
 # Run through the LED strip routine
@@ -25,18 +25,18 @@ def run_LedStrip(stop_event):
     strip.begin()
 
     while isStillMoving:
-        print('Color wipe animations.')
-        led_strip.colorWipe(strip, led_strip.Color(255, 0, 0))  # Red wipe
-        led_strip.colorWipe(strip, led_strip.Color(0, 255, 0))  # Blue wipe
-        led_strip.colorWipe(strip, led_strip.Color(0, 0, 255))  # Green wipe
-        print('Theater chase animations.')
-        led_strip.theaterChase(strip, led_strip.Color(127, 127, 127))  # White theater chase
-        led_strip.theaterChase(strip, led_strip.Color(127, 0, 0))  # Red theater chase
-        led_strip.theatserChase(strip, led_strip.Color(0, 0, 127))  # Blue theater chase
+#        print('Color wipe animations.')
+#        led_strip.colorWipe(strip, led_strip.Color(255, 0, 0))  # Red wipe
+#        led_strip.colorWipe(strip, led_strip.Color(0, 255, 0))  # Blue wipe
+#        led_strip.colorWipe(strip, led_strip.Color(0, 0, 255))  # Green wipe
+#        print('Theater chase animations.')
+#        led_strip.theaterChase(strip, led_strip.Color(127, 127, 127))  # White theater chase
+#        led_strip.theaterChase(strip, led_strip.Color(127, 0, 0))  # Red theater chase
+#        led_strip.theatserChase(strip, led_strip.Color(0, 0, 127))  # Blue theater chase
         print('Rainbow animations.')
-        led_strip.rainbow(strip)
-        led_strip.rainbowCycle(strip)
-        led_strip.theaterChaseRainbow(strip)
+#        led_strip.rainbow(strip)
+#        led_strip.rainbowCycle(strip)
+#        led_strip.theaterChaseRainbow(strip)
     print("LED: " + str(isStillMoving))
 
 
@@ -91,6 +91,7 @@ def calibrate_slide():
         sleep(2)
         test_outer = M_Lin.Turn_check_cali(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
         maxPos = totalDist
+        test_inner = M_Lin.Turn_check_cali(Dir='backward', steps=totalDist, limit_switch=inner_switch, stepdelay=delay)
 
         if test_inner and test_outer:
             calibrated = True
