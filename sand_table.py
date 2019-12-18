@@ -21,7 +21,7 @@ strip = led_strip.strip_init()
 
 # Run through the LED strip routine
 def run_LedStrip(stop_event):
-    print(f"LED: {isStillMoving}")
+    print("LED: " + str(isStillMoving))
     strip.begin()
 
     while isStillMoving:
@@ -37,19 +37,20 @@ def run_LedStrip(stop_event):
         led_strip.rainbow(strip)
         led_strip.rainbowCycle(strip)
         led_strip.theaterChaseRainbow(strip)
-    print(f"LED: {isStillMoving}")
+    print("LED: " + str(isStillMoving))
 
 
 # Functions defined for each motor thread
 def run_MRotate(stop_event):
-    print(f"ROT: {isStillMoving}")
+    print("ROT: " + str(isStillMoving))
     M_Rot.SetMicroStep('software','1/4step')
     rot_delay = 0.0015
     rot_steps = 3200 # One full revolution
     while isStillMoving:
         M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay = rot_delay)
     M_Rot.Stop()
-    print(f"LED: {isStillMoving}")
+    print("ROT: " + str(isStillMoving))
+
 
 def run_MLinear(num_steps, delay, stop_event):
     M_Lin.SetMicroStep('software','1/4step')
