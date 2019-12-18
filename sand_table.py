@@ -36,7 +36,7 @@ def run_LedStrip(stop_event):
         print('Rainbow animations.')
 #        led_strip.rainbow(strip)
 #        led_strip.rainbowCycle(strip)
-#        led_strip.theaterChaseRainbow(strip)
+        led_strip.theaterChaseRainbow(strip)
     print("LED: " + str(isStillMoving))
 
 
