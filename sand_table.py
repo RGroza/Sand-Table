@@ -36,7 +36,7 @@ def run_LedStrip(stop_event):
         print('Rainbow animations.')
 #        led_strip.rainbow(strip)
 #        led_strip.rainbowCycle(strip)
-#        led_strip.theaterChaseRainbow(strip)
+        led_strip.theaterChaseRainbow(strip)
     print("LED: " + str(isStillMoving))
 
 
@@ -106,13 +106,14 @@ def calibrate_slide():
 def stop_program(threading_event):
     threading_event.set()
     isStillMoving = False
-    colorWipe(strip, Color(0, 0, 0), 10)
+
+    led_strip.colorWipe(strip, Color(0, 0, 0), 10)
     MRot.join()
     LStrip.join()
-    #MLin.join()
+
     print("\nMotors stopped")
     M_Rot.Stop()
-    #M_Lin.Stop()
+    M_Lin.Stop()
     GPIO.cleanup()
     print("Exiting...")
     exit()
