@@ -98,7 +98,6 @@ def calibrate_slide():
         sleep(2)
         test_outer = M_Lin.Turn_check_cali(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
         maxPos = totalDist
-        test_inner = M_Lin.Turn_check_cali(Dir='backward', steps=totalDist, limit_switch=inner_switch, stepdelay=delay)
 
         if test_inner and test_outer:
             calibrated = True

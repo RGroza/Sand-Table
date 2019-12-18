@@ -8,7 +8,7 @@ import keyboard
 import led_strip # from led_strip.py
 
 
-isStillMoving = False # Flag whether motors are to be moving
+isStillMoving = True # Flag whether motors are to be moving
 
 
 # Motor driver object init
@@ -21,6 +21,7 @@ strip = led_strip.strip_init()
 
 # Run through the LED strip routine
 def run_LedStrip(stop_event):
+    print(f"LED: {isStillMoving}")
     strip.begin()
 
     while isStillMoving:
@@ -31,21 +32,24 @@ def run_LedStrip(stop_event):
         print('Theater chase animations.')
         led_strip.theaterChase(strip, Color(127, 127, 127))  # White theater chase
         led_strip.theaterChase(strip, Color(127, 0, 0))  # Red theater chase
-        led_strip.theaterChase(strip, Color(0, 0, 127))  # Blue theater chase
+        led_strip.theatserChase(strip, Color(0, 0, 127))  # Blue theater chase
         print('Rainbow animations.')
         led_strip.rainbow(strip)
         led_strip.rainbowCycle(strip)
         led_strip.theaterChaseRainbow(strip)
+    print(f"LED: {isStillMoving}")
 
 
 # Functions defined for each motor thread
 def run_MRotate(stop_event):
+    print(f"ROT: {isStillMoving}")
     M_Rot.SetMicroStep('software','1/4step')
     rot_delay = 0.0015
     rot_steps = 3200 # One full revolution
     while isStillMoving:
         M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay = rot_delay)
     M_Rot.Stop()
+    print(f"LED: {isStillMoving}")
 
 def run_MLinear(num_steps, delay, stop_event):
     M_Lin.SetMicroStep('software','1/4step')
@@ -86,7 +90,6 @@ def calibrate_slide():
         sleep(2)
         test_outer = M_Lin.Turn_check_cali(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
         maxPos = totalDist
-        test_inner = M_Lin.Turn_check_cali(Dir='backward', steps=totalDist, limit_switch=inner_switch, stepdelay=delay)
 
         if test_inner and test_outer:
             calibrated = True
@@ -127,14 +130,15 @@ def main():
 
     currentTheta = 0 # Theta coordinate val - currently just an incrementer
     theta_steps = 100
-    LinPos = 0
-    LastLinPos = 0
-    Lin_delay = 0.00125
+    linPos = 0
+    lastLinPos = 0
+    lin_delay = 0.00125
+
+    isStillMoving = True
 
     try:
         maxDisp = calibrate_slide() - 50
         threading_event = threading.Event()
-        isStillMoving = True
 
         # Start rotation, split into 3 threads (the main thread will process linear movements for MLin)
         MRot = threading.Thread(target=run_MRotate, args=(threading_event,))
@@ -145,13 +149,13 @@ def main():
         print("\nLed Strip Thread Started")
 
         while isStillMoving:
-            LastLinPos = LinPos
-            LinPos = draw_function(maxDisp, currentTheta, rev_steps) # Set the LinPos to the calculated position
+            lastLinPos = linPos
+            linPos = draw_function(maxDisp, currentTheta, rev_steps) # Set the LinPos to the calculated position
             currentTheta += theta_steps
 
-            print(str(LinPos))
+            print(str(linPos))
 
-            nextPos = LinPos - LastLinPos
+            nextPos = linPos - lastLinPos
             run_MLinear(nextPos, Lin_delay, threading_event,)
 
     except KeyboardInterrupt:
