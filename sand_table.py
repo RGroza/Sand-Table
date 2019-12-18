@@ -5,18 +5,18 @@ import math
 from time import sleep
 import keyboard
 
+from rpi_ws281x import PixelStrip, Color
 import led_strip # from led_strip.py
 
 
 isStillMoving = True # Flag whether motors are to be moving
-
 
 # Motor driver object init
 M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
 M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
 # Create NeoPixel object with appropriate configuration.
-strip = led_strip.strip_init()
+strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
 
 
 # Run through the LED strip routine
@@ -157,7 +157,7 @@ def main():
             print(str(linPos))
 
             nextPos = linPos - lastLinPos
-            run_MLinear(nextPos, Lin_delay, threading_event,)
+            run_MLinear(nextPos, lin_delay, threading_event,)
 
     except KeyboardInterrupt:
         stop_program(threading_event)
