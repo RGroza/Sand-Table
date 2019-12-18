@@ -26,13 +26,13 @@ def run_LedStrip(stop_event):
 
     while isStillMoving:
         print('Color wipe animations.')
-        led_strip.colorWipe(strip, Color(255, 0, 0))  # Red wipe
-        led_strip.colorWipe(strip, Color(0, 255, 0))  # Blue wipe
-        led_strip.colorWipe(strip, Color(0, 0, 255))  # Green wipe
+        led_strip.colorWipe(strip, led_strip.Color(255, 0, 0))  # Red wipe
+        led_strip.colorWipe(strip, led_strip.Color(0, 255, 0))  # Blue wipe
+        led_strip.colorWipe(strip, led_strip.Color(0, 0, 255))  # Green wipe
         print('Theater chase animations.')
-        led_strip.theaterChase(strip, Color(127, 127, 127))  # White theater chase
-        led_strip.theaterChase(strip, Color(127, 0, 0))  # Red theater chase
-        led_strip.theatserChase(strip, Color(0, 0, 127))  # Blue theater chase
+        led_strip.theaterChase(strip, led_strip.Color(127, 127, 127))  # White theater chase
+        led_strip.theaterChase(strip, led_strip.Color(127, 0, 0))  # Red theater chase
+        led_strip.theatserChase(strip, led_strip.Color(0, 0, 127))  # Blue theater chase
         print('Rainbow animations.')
         led_strip.rainbow(strip)
         led_strip.rainbowCycle(strip)
