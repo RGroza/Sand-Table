@@ -40,7 +40,7 @@ def run_LedStrip(stop_event, isStillMoving):
         print('Theater chase animations.')
         led_strip.theaterChase(strip, led_strip.Color(127, 127, 127))  # White theater chase
         led_strip.theaterChase(strip, led_strip.Color(127, 0, 0))  # Red theater chase
-        led_strip.theatserChase(strip, led_strip.Color(0, 0, 127))  # Blue theater chase
+        led_strip.theaterChase(strip, led_strip.Color(0, 0, 127))  # Blue theater chase
         print('Rainbow animations.')
         led_strip.rainbow(strip)
         led_strip.rainbowCycle(strip)
@@ -85,11 +85,11 @@ def calibrate_slide():
         totalDist = maxPos - minPos - center_to_min - outer_to_max
         print ("Travel Distance: " + str(totalDist))
 
-        sleep(2)
+        sleep(.5)
 
         test_inner = M_Lin.Turn_check_cali(Dir='backward', steps=totalDist + outer_to_max, limit_switch=inner_switch, stepdelay=delay)
         minPos = 0
-        sleep(2)
+        sleep(.5)
         test_outer = M_Lin.Turn_check_cali(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
         maxPos = totalDist
         test_inner = M_Lin.Turn_check_cali(Dir='backward', steps=totalDist, limit_switch=inner_switch, stepdelay=delay)
@@ -149,7 +149,6 @@ def main(isStillMoving):
         # Start rotation, split into 3 threads (the main thread will process linear movements for MLin)
         MRot = threading.Thread(target=run_MRotate, args=(threading_event, isStillMoving,))
         LStrip = threading.Thread(target=run_LedStrip, args=(threading_event, isStillMoving,))
-        switches = threading.Thread(target=check_collision, args=(threading_event, isStillMoving,))
 
         MRot.start()
         print("\nROT Thread Started")
@@ -164,11 +163,11 @@ def main(isStillMoving):
             print(str(linPos))
 
             nextPos = linPos - lastLinPos
-            run_MLinear(nextPos, lin_delay, threading_event,)
+            run_MLinear(nextPos, lin_delay, threading_event, isStillMoving)
 
-            check_collision()
+            check_collision(threading_event, isStillMoving)
 
     except KeyboardInterrupt:
         stop_program(threading_event)
 
-main()
+main(isStillMoving)
