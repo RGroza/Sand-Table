@@ -10,6 +10,7 @@ import led_strip # from led_strip.py
 
 
 isStillMoving = True # Flag whether motors are to be moving
+isPaused = False
 
 # Motor driver object init
 M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
@@ -27,7 +28,7 @@ GPIO.setup(outer_switch, GPIO.IN)
 GPIO.setup(inner_switch, GPIO.IN)
 
 # Run through the LED strip routine
-def run_LedStrip(stop_event):
+def run_LedStrip(stop_event, isStillMoving):
     print("LED: " + str(isStillMoving))
     strip.begin()
 
@@ -48,7 +49,7 @@ def run_LedStrip(stop_event):
 
 
 # Functions defined for each motor thread
-def run_MRotate(stop_event):
+def run_MRotate(stop_event, isStillMoving):
     print("ROT: " + str(isStillMoving))
     M_Rot.SetMicroStep('software','1/4step')
     rot_delay = 0.0015
@@ -59,7 +60,7 @@ def run_MRotate(stop_event):
     print("ROT: " + str(isStillMoving))
 
 
-def run_MLinear(num_steps, delay, stop_event):
+def run_MLinear(num_steps, delay, stop_event, isStillMoving):
     M_Lin.SetMicroStep('software','1/4step')
     if num_steps > 0:
         M_Lin.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay = delay)
@@ -103,7 +104,7 @@ def calibrate_slide():
 
 
 # Stops the motors and LED strip, and joins the threads
-def stop_program(threading_event):
+def stop_program(threading_event, isStillMoving):
     threading_event.set()
     isStillMoving = False
 
@@ -125,12 +126,13 @@ def draw_function(maxDisp, currentTheta, rev_steps):
     pos = round(maxDisp * abs(math.cos(math.radians(360 * currentTheta / rev_steps))))
     return pos
 
-def check_collision():
-    isStillMoving = GPIO.input(inner_switch) == 1 and GPIO.input(outer_switch) == 1
+def check_collision(threading_event, isStillMoving):
+    while threading_event:
+        isStillMoving = GPIO.input(inner_switch) == 1 and GPIO.input(outer_switch) == 1
 
 
 # Main function for the program
-def main():
+def main(isStillMoving):
     # Sand Table hardware constants
     rev_steps = 3200
 
@@ -140,15 +142,14 @@ def main():
     lastLinPos = 0
     lin_delay = 0.00125
 
-    isStillMoving = True
-
     try:
         maxDisp = calibrate_slide() - 50
         threading_event = threading.Event()
 
         # Start rotation, split into 3 threads (the main thread will process linear movements for MLin)
-        MRot = threading.Thread(target=run_MRotate, args=(threading_event,))
-        LStrip = threading.Thread(target=run_LedStrip, args=(threading_event,))
+        MRot = threading.Thread(target=run_MRotate, args=(threading_event, isStillMoving,))
+        LStrip = threading.Thread(target=run_LedStrip, args=(threading_event, isStillMoving,))
+        switches = threading.Thread(target=check_collision, args=(threading_event, isStillMoving,))
 
         MRot.start()
         print("\nROT Thread Started")
