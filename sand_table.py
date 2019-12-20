@@ -18,6 +18,13 @@ M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 # Create NeoPixel object with appropriate configuration.
 strip = led_strip.strip_init()
 
+# Setup for limit switches
+outer_switch = 5
+inner_switch = 6
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(outer_switch, GPIO.IN)
+GPIO.setup(inner_switch, GPIO.IN)
 
 # Run through the LED strip routine
 def run_LedStrip(stop_event):
@@ -62,13 +69,6 @@ def run_MLinear(num_steps, delay, stop_event):
 
 # Calibrates the linear slide arm before starting the main program routine
 def calibrate_slide():
-    outer_switch = 5
-    inner_switch = 6
-
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(outer_switch, GPIO.IN)
-    GPIO.setup(inner_switch, GPIO.IN)
-
     delay = 1 / 1000
     center_to_min = 20
     outer_to_max = 20
@@ -124,6 +124,9 @@ def draw_function(maxDisp, currentTheta, rev_steps):
     # Function that can be modified to create different patterns
     pos = round(maxDisp * abs(math.cos(math.radians(360 * currentTheta / rev_steps))))
     return pos
+
+def check_collision():
+    isStillMoving = GPIO.input(inner_switch) == 1 and GPIO.input(outer_switch) == 1
 
 
 # Main function for the program
