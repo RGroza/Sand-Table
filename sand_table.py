@@ -32,17 +32,17 @@ def run_LedStrip(stop_event):
     strip.begin()
 
     while isStillMoving:
-#        print('Color wipe animations.')
-#        led_strip.colorWipe(strip, led_strip.Color(255, 0, 0))  # Red wipe
-#        led_strip.colorWipe(strip, led_strip.Color(0, 255, 0))  # Blue wipe
-#        led_strip.colorWipe(strip, led_strip.Color(0, 0, 255))  # Green wipe
-#        print('Theater chase animations.')
-#        led_strip.theaterChase(strip, led_strip.Color(127, 127, 127))  # White theater chase
-#        led_strip.theaterChase(strip, led_strip.Color(127, 0, 0))  # Red theater chase
-#        led_strip.theatserChase(strip, led_strip.Color(0, 0, 127))  # Blue theater chase
+        print('Color wipe animations.')
+        led_strip.colorWipe(strip, led_strip.Color(255, 0, 0))  # Red wipe
+        led_strip.colorWipe(strip, led_strip.Color(0, 255, 0))  # Blue wipe
+        led_strip.colorWipe(strip, led_strip.Color(0, 0, 255))  # Green wipe
+        print('Theater chase animations.')
+        led_strip.theaterChase(strip, led_strip.Color(127, 127, 127))  # White theater chase
+        led_strip.theaterChase(strip, led_strip.Color(127, 0, 0))  # Red theater chase
+        led_strip.theatserChase(strip, led_strip.Color(0, 0, 127))  # Blue theater chase
         print('Rainbow animations.')
-#        led_strip.rainbow(strip)
-#        led_strip.rainbowCycle(strip)
+        led_strip.rainbow(strip)
+        led_strip.rainbowCycle(strip)
         led_strip.theaterChaseRainbow(strip)
     print("LED: " + str(isStillMoving))
 
@@ -149,6 +149,7 @@ def main():
         # Start rotation, split into 3 threads (the main thread will process linear movements for MLin)
         MRot = threading.Thread(target=run_MRotate, args=(threading_event,))
         LStrip = threading.Thread(target=run_LedStrip, args=(threading_event,))
+
         MRot.start()
         print("\nROT Thread Started")
         LStrip.start()

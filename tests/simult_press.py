@@ -1,3 +1,4 @@
+import RPi.GPIO as GPIO
 import time
 
 outer_switch = 5
@@ -12,7 +13,9 @@ button_delay = .5
 while True:
     if GPIO.input(inner_switch) == 0:
         init_time = time.time()
-        if GPIO.input(outer_switch) == 0 and time.time() - init_time == 250000000:
+        if GPIO.input(outer_switch) == 0 and time.time() - init_time < 250000000:
             print("Both")
     elif GPIO.input(outer_switch) == 0:
-        
+        init_time = time.time()
+        if GPIO.input(outer_switch) == 0 and time.time() - init_time == 250000000:
+            print("Both")
