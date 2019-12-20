@@ -165,6 +165,8 @@ def main():
             nextPos = linPos - lastLinPos
             run_MLinear(nextPos, lin_delay, threading_event,)
 
+            check_collision()
+
     except KeyboardInterrupt:
         stop_program(threading_event)
 
