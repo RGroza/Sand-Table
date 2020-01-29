@@ -129,6 +129,7 @@ def draw_function(maxDisp, currentTheta, rev_steps):
     return pos
 
 def check_collision():
+    while not stop_threads:
         if GPIO.input(inner_switch) == 0 or GPIO.input(outer_switch) == 0:
             M_Rot.Stop()
             M_Lin.Stop()
