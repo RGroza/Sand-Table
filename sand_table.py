@@ -28,7 +28,7 @@ GPIO.setup(inner_switch, GPIO.IN)
 
 # Run through the LED strip routine
 def run_LedStrip(stop_event):
-    print(f"LED stop_threads: {stop_threads}")
+    print("LED stop_threads: " + str(stop_threads))
     strip.begin()
 
     while isStillMoving:
@@ -44,19 +44,19 @@ def run_LedStrip(stop_event):
         led_strip.rainbow(strip)
         led_strip.rainbowCycle(strip)
         led_strip.theaterChaseRainbow(strip)
-    print(f"LED stop_threads: {stop_threads}")
+    print("LED stop_threads: " + str(stop_threads))
 
 
 # Functions defined for each motor thread
 def run_MRotate():
-    print(f"ROT stop_threads: {stop_threads}")
+    print("ROT stop_threads: " + str(stop_threads))
     M_Rot.SetMicroStep('software','1/4step')
     rot_delay = 0.0015
     rot_steps = 3200 # One full revolution
     while not stop_threads:
         M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay=rot_delay, stop_event=stop_threads)
     M_Rot.Stop()
-    print(f"ROT stop_threads: {stop_threads}")
+    print("ROT stop_threads: " + str(stop_threads))
 
 
 def run_MLinear(num_steps, delay):
@@ -82,7 +82,7 @@ def calibrate_slide():
         positions = (minPos, maxPos)
         print(positions)
         totalDist = maxPos - minPos - center_to_min - outer_to_max
-        print (f"Travel dist: {totalDist}")
+        print ("Travel dist: " + str(totalDist))
 
         sleep(.5)
 
