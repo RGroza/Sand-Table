@@ -15,6 +15,11 @@ stop_threads = False # Flag for stopping all threads
 M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20), stop_event=False)
 M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27), stop_event=False)
 
+# Create seperate threads
+MRot = threading.Thread(target=run_MRotate)
+LStrip = threading.Thread(target=run_LedStrip)
+End_stops = threading.Thread(target=check_collision)
+
 # Create NeoPixel object with appropriate configuration.
 strip = led_strip.strip_init()
 
@@ -120,7 +125,7 @@ def stop_program():
 
 def stop_all_threads():
     stop_threads = True
-    MRot.stop_thread()
+    M_Rot.stop_thread()
 
 # Create a function and return the linear postion for the arm (r coordinate val)
 def draw_function(maxDisp, currentTheta, rev_steps):
@@ -151,12 +156,12 @@ def main():
         maxDisp = calibrate_slide() - 200
 
         # Start rotation, split into 3 threads (the main thread will process linear movements for MLin)
-        global MRot
-        MRot = threading.Thread(target=run_MRotate)
-        global LStrip
-        LStrip = threading.Thread(target=run_LedStrip)
-        global End_stops
-        End_stops = threading.Thread(target=check_collision)
+        # global MRot
+        # MRot = threading.Thread(target=run_MRotate)
+        # global LStrip
+        # LStrip = threading.Thread(target=run_LedStrip)
+        # global End_stops
+        # End_stops = threading.Thread(target=check_collision)
 
         MRot.start()
         print("\nROT Thread Started")
