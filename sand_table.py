@@ -12,8 +12,8 @@ import led_strip # from led_strip.py
 stop_threads = False # Flag for stopping all threads
 
 # Motor driver object init
-M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
-M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
+M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20), False)
+M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27), False)
 
 # Create NeoPixel object with appropriate configuration.
 strip = led_strip.strip_init()

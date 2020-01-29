@@ -12,11 +12,12 @@ ControlMode = [
 ]
 
 class DRV8825():
-    def __init__(self, dir_pin, step_pin, enable_pin, mode_pins):
+    def __init__(self, dir_pin, step_pin, enable_pin, mode_pins, stop_event):
         self.dir_pin = dir_pin
         self.step_pin = step_pin
         self.enable_pin = enable_pin
         self.mode_pins = mode_pins
+        self.stop_thread = stop_event
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
@@ -24,6 +25,9 @@ class DRV8825():
         GPIO.setup(self.step_pin, GPIO.OUT)
         GPIO.setup(self.enable_pin, GPIO.OUT)
         GPIO.setup(self.mode_pins, GPIO.OUT)
+
+    def stop_thread(self)
+        stop_thread = True
 
     def digital_write(self, pin, value):
         GPIO.output(pin, value)
@@ -77,7 +81,7 @@ class DRV8825():
             if stop_event.wait(stepdelay):
                 return
 
-    def TurnStep_ROT(self, Dir, steps, stepdelay=0.005):
+    def TurnStep_ROT(self, Dir, steps, stepdelay=0.005, stop_event):
         if (Dir == MotorDir[0]):
             # print("forward")
             self.digital_write(self.enable_pin, 0)
@@ -95,7 +99,7 @@ class DRV8825():
             return
 
         # print("turn step: ",steps)
-        while steps > 0:
+        while steps > 0 and not self.stop_thread:
             self.digital_write(self.step_pin, True)
             time.sleep(stepdelay)
             self.digital_write(self.step_pin, False)
@@ -122,7 +126,7 @@ class DRV8825():
             return
 
         # print("turn step: ",steps)
-        while steps > 0:
+        while steps > 0 and not self.stop_thread:
             self.digital_write(self.step_pin, True)
             time.sleep(stepdelay)
             self.digital_write(self.step_pin, False)
@@ -147,7 +151,7 @@ class DRV8825():
 
         # print("turn step: ",steps)
         pos = 0
-        while GPIO.input(limit_switch) == 1:
+        while GPIO.input(limit_switch) == 1 and not self.stop_thread:
             self.digital_write(self.step_pin, True)
             time.sleep(stepdelay)
             self.digital_write(self.step_pin, False)
@@ -177,7 +181,7 @@ class DRV8825():
             return
 
         # print("turn step: ",steps)
-        while steps > 0:
+        while steps > 0 and not self.stop_thread:
             if GPIO.input(limit_switch) == 0:
                 return False
             self.digital_write(self.step_pin, True)
