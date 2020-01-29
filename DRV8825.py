@@ -17,7 +17,7 @@ class DRV8825():
         self.step_pin = step_pin
         self.enable_pin = enable_pin
         self.mode_pins = mode_pins
-        self.stop_thread = stop_event
+        self.stop_event = stop_event
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
@@ -27,7 +27,7 @@ class DRV8825():
         GPIO.setup(self.mode_pins, GPIO.OUT)
 
     def stop_thread(self):
-        stop_thread = True
+        stop_event = True
 
     def digital_write(self, pin, value):
         GPIO.output(pin, value)
@@ -74,7 +74,7 @@ class DRV8825():
             return
 
         print("turn step: ",steps)
-        while steps > 0 and not self.stop_thread:
+        while steps > 0 and not self.stop_event:
             self.digital_write(self.step_pin, True)
             time.sleep(stepdelay)
             self.digital_write(self.step_pin, False)
@@ -99,7 +99,7 @@ class DRV8825():
             return
 
         # print("turn step: ",steps)
-        while steps > 0 and not self.stop_thread:
+        while steps > 0 and not self.stop_event:
             self.digital_write(self.step_pin, True)
             time.sleep(stepdelay)
             self.digital_write(self.step_pin, False)
@@ -126,7 +126,7 @@ class DRV8825():
             return
 
         # print("turn step: ",steps)
-        while steps > 0 and not self.stop_thread:
+        while steps > 0 and not self.stop_event:
             self.digital_write(self.step_pin, True)
             time.sleep(stepdelay)
             self.digital_write(self.step_pin, False)
@@ -151,7 +151,7 @@ class DRV8825():
 
         # print("turn step: ",steps)
         pos = 0
-        while GPIO.input(limit_switch) == 1 and not self.stop_thread:
+        while GPIO.input(limit_switch) == 1 and not self.stop_event:
             self.digital_write(self.step_pin, True)
             time.sleep(stepdelay)
             self.digital_write(self.step_pin, False)
@@ -181,7 +181,7 @@ class DRV8825():
             return
 
         # print("turn step: ",steps)
-        while steps > 0 and not self.stop_thread:
+        while steps > 0 and not self.stop_event:
             if GPIO.input(limit_switch) == 0:
                 return False
             self.digital_write(self.step_pin, True)
