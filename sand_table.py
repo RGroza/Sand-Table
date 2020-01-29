@@ -54,7 +54,7 @@ def run_MRotate():
     rot_delay = 0.0015
     rot_steps = 3200 # One full revolution
     while not stop_threads:
-        M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay=rot_delay, stop_event=stop_threads)
+        M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay=rot_delay)
     M_Rot.Stop()
     print("ROT stop_threads: " + str(stop_threads))
 
@@ -150,9 +150,12 @@ def main():
         maxDisp = calibrate_slide() - 200
 
         # Start rotation, split into 3 threads (the main thread will process linear movements for MLin)
-        global MRot = threading.Thread(target=run_MRotate)
-        global LStrip = threading.Thread(target=run_LedStrip)
-        global End_stops = threading.Thread(target=check_collision)
+        global MRot
+        MRot = threading.Thread(target=run_MRotate)
+        global LStrip
+        LStrip = threading.Thread(target=run_LedStrip)
+        global End_stops
+        End_stops = threading.Thread(target=check_collision)
 
         MRot.start()
         print("\nROT Thread Started")
