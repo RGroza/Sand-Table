@@ -26,7 +26,7 @@ class DRV8825():
         GPIO.setup(self.enable_pin, GPIO.OUT)
         GPIO.setup(self.mode_pins, GPIO.OUT)
 
-    def stop_thread(self)
+    def stop_thread(self):
         stop_thread = True
 
     def digital_write(self, pin, value):
@@ -81,7 +81,7 @@ class DRV8825():
             if stop_event.wait(stepdelay):
                 return
 
-    def TurnStep_ROT(self, Dir, steps, stepdelay=0.005, stop_event):
+    def TurnStep_ROT(self, Dir, steps, stepdelay=0.005):
         if (Dir == MotorDir[0]):
             # print("forward")
             self.digital_write(self.enable_pin, 0)
