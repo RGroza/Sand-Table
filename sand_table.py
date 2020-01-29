@@ -27,7 +27,7 @@ GPIO.setup(outer_switch, GPIO.IN)
 GPIO.setup(inner_switch, GPIO.IN)
 
 # Run through the LED strip routine
-def run_LedStrip(stop_event):
+def run_LedStrip():
     print("LED stop_threads: " + str(stop_threads))
     strip.begin()
 
@@ -62,9 +62,9 @@ def run_MRotate():
 def run_MLinear(num_steps, delay):
     M_Lin.SetMicroStep('software','1/4step')
     if num_steps > 0:
-        M_Lin.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay=delay)
+        M_Lin.TurnStep(Dir='forward', steps=num_steps, stepdelay=delay)
     else:
-        M_Lin.TurnStep(stop_event, Dir='backward', steps=abs(num_steps), stepdelay=delay)
+        M_Lin.TurnStep(Dir='backward', steps=abs(num_steps), stepdelay=delay)
 
 
 # Calibrates the linear slide arm before starting the main program routine

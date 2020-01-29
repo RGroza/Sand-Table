@@ -56,7 +56,7 @@ class DRV8825():
             print("set pins")
             self.digital_write(self.mode_pins, microstep[stepformat])
 
-    def TurnStep(self, stop_event, Dir, steps, stepdelay=0.005):
+    def TurnStep(self, Dir, steps, stepdelay=0.005):
         if (Dir == MotorDir[0]):
             print("forward")
             self.digital_write(self.enable_pin, 0)
@@ -74,12 +74,12 @@ class DRV8825():
             return
 
         print("turn step: ",steps)
-        for i in range(steps):
+        while steps > 0 and not self.stop_thread:
             self.digital_write(self.step_pin, True)
             time.sleep(stepdelay)
             self.digital_write(self.step_pin, False)
-            if stop_event.wait(stepdelay):
-                return
+            time.sleep(stepdelay)
+            steps -= 1
 
     def TurnStep_ROT(self, Dir, steps, stepdelay=0.005, stop_event):
         if (Dir == MotorDir[0]):
