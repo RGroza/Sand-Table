@@ -9,8 +9,7 @@ from rpi_ws281x import PixelStrip, Color
 import led_strip # from led_strip.py
 
 
-isStillMoving = True # Flag whether motors are to be moving
-isPaused = False
+stop_threads = False # Flag for stopping all threads
 
 # Motor driver object init
 M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
@@ -29,7 +28,7 @@ GPIO.setup(inner_switch, GPIO.IN)
 
 # Run through the LED strip routine
 def run_LedStrip(stop_event):
-    print("LED: " + str(isStillMoving))
+    print(f"LED stop_threads: {stop_threads}")
     strip.begin()
 
     while isStillMoving:
@@ -45,27 +44,27 @@ def run_LedStrip(stop_event):
         led_strip.rainbow(strip)
         led_strip.rainbowCycle(strip)
         led_strip.theaterChaseRainbow(strip)
-    print("LED: " + str(isStillMoving))
+    print(f"LED stop_threads: {stop_threads}")
 
 
 # Functions defined for each motor thread
-def run_MRotate(stop_event):
-    print("ROT: " + str(isStillMoving))
+def run_MRotate():
+    print(f"ROT stop_threads: {stop_threads}")
     M_Rot.SetMicroStep('software','1/4step')
     rot_delay = 0.0015
     rot_steps = 3200 # One full revolution
-    while isStillMoving:
-        M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay = rot_delay)
+    while not stop_threads:
+        M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay=rot_delay, stop_event=stop_threads)
     M_Rot.Stop()
-    print("ROT: " + str(isStillMoving))
+    print(f"ROT stop_threads: {stop_threads}")
 
 
-def run_MLinear(num_steps, delay, stop_event):
+def run_MLinear(num_steps, delay):
     M_Lin.SetMicroStep('software','1/4step')
     if num_steps > 0:
-        M_Lin.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay = delay)
+        M_Lin.TurnStep(stop_event, Dir='forward', steps=num_steps, stepdelay=delay)
     else:
-        M_Lin.TurnStep(stop_event, Dir='backward', steps=abs(num_steps), stepdelay = delay)
+        M_Lin.TurnStep(stop_event, Dir='backward', steps=abs(num_steps), stepdelay=delay)
 
 
 # Calibrates the linear slide arm before starting the main program routine
@@ -83,7 +82,7 @@ def calibrate_slide():
         positions = (minPos, maxPos)
         print(positions)
         totalDist = maxPos - minPos - center_to_min - outer_to_max
-        print ("Travel Distance: " + str(totalDist))
+        print (f"Travel dist: {totalDist}")
 
         sleep(.5)
 
@@ -104,21 +103,24 @@ def calibrate_slide():
 
 
 # Stops the motors and LED strip, and joins the threads
-def stop_program(threading_event):
-    threading_event.set()
-    isStillMoving = False
+def stop_program():
+    stop_threads = True
 
     led_strip.colorWipe(strip, Color(0, 0, 0), 10)
     MRot.join()
     LStrip.join()
+    End_stops.join()
 
-    print("\nMotors stopped")
     M_Rot.Stop()
     M_Lin.Stop()
+    print("\nMotors stopped")
     GPIO.cleanup()
     print("Exiting...")
     exit()
 
+def stop_all_threads():
+    stop_threads = True
+    MRot.stop_thread()
 
 # Create a function and return the linear postion for the arm (r coordinate val)
 def draw_function(maxDisp, currentTheta, rev_steps):
@@ -126,9 +128,11 @@ def draw_function(maxDisp, currentTheta, rev_steps):
     pos = round(maxDisp * abs(math.cos(math.radians(360 * currentTheta / rev_steps))))
     return pos
 
-def check_collision(threading_event):
-    while threading_event:
-        isStillMoving = GPIO.input(inner_switch) == 1 and GPIO.input(outer_switch) == 1
+def check_collision():
+        if GPIO.input(inner_switch) == 0 or GPIO.input(outer_switch) == 0:
+            M_Rot.Stop()
+            M_Lin.Stop()
+            stop_all_threads()
 
 
 # Main function for the program
@@ -143,19 +147,21 @@ def main():
     lin_delay = 0.00125
 
     try:
-        maxDisp = calibrate_slide() - 50
-        threading_event = threading.Event()
+        maxDisp = calibrate_slide() - 200
 
         # Start rotation, split into 3 threads (the main thread will process linear movements for MLin)
-        MRot = threading.Thread(target=run_MRotate, args=(threading_event,))
-        LStrip = threading.Thread(target=run_LedStrip, args=(threading_event,))
+        global MRot = threading.Thread(target=run_MRotate)
+        global LStrip = threading.Thread(target=run_LedStrip)
+        global End_stops = threading.Thread(target=check_collision)
 
         MRot.start()
         print("\nROT Thread Started")
         LStrip.start()
         print("\nLed Strip Thread Started")
+        End_stops.start()
+        print("\nChecking collision")
 
-        while isStillMoving:
+        while not stop_threads:
             lastLinPos = linPos
             linPos = draw_function(maxDisp, currentTheta, rev_steps) # Set the LinPos to the calculated position
             currentTheta += theta_steps
@@ -163,11 +169,9 @@ def main():
             print(str(linPos))
 
             nextPos = linPos - lastLinPos
-            run_MLinear(nextPos, lin_delay, threading_event)
-
-            check_collision(threading_event)
+            run_MLinear(nextPos, lin_delay)
 
     except KeyboardInterrupt:
-        stop_program(threading_event)
+        stop_program()
 
 main()
