@@ -31,7 +31,7 @@ def run_LedStrip():
     print("LED stop_threads: " + str(stop_threads))
     strip.begin()
 
-    while isStillMoving:
+    while not stop_threads:
         print('Color wipe animations.')
         led_strip.colorWipe(strip, led_strip.Color(255, 0, 0))  # Red wipe
         led_strip.colorWipe(strip, led_strip.Color(0, 255, 0))  # Blue wipe
