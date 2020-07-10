@@ -31,6 +31,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(outer_switch, GPIO.IN)
 GPIO.setup(inner_switch, GPIO.IN)
 
+
 # Run through the LED strip routine
 def run_LedStrip():
     print("LED stop_threads: " + str(stop_threads))
@@ -49,6 +50,7 @@ def run_LedStrip():
         led_strip.rainbow(strip)
         led_strip.rainbowCycle(strip)
         led_strip.theaterChaseRainbow(strip)
+
     print("LED stop_threads: " + str(stop_threads))
 
 
@@ -58,14 +60,17 @@ def run_MRotate():
     M_Rot.SetMicroStep('software','1/4step')
     rot_delay = 0.0015
     rot_steps = 3200 # One full revolution
+
     while not stop_threads:
         M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay=rot_delay)
+
     M_Rot.Stop()
     print("ROT stop_threads: " + str(stop_threads))
 
 
 def run_MLinear(num_steps, delay):
     M_Lin.SetMicroStep('software','1/4step')
+
     if num_steps > 0:
         M_Lin.TurnStep(Dir='forward', steps=num_steps, stepdelay=delay)
     else:
@@ -74,7 +79,7 @@ def run_MLinear(num_steps, delay):
 
 # Calibrates the linear slide arm before starting the main program routine
 def calibrate_slide():
-    delay = 1 / 1000
+    delay = 0.001
     center_to_min = 20
     outer_to_max = 20
 
@@ -102,6 +107,7 @@ def calibrate_slide():
             calibrated = True
         else:
             print("Calibration Failed! Trying again...")
+
     print("Calibration Passed!")
 
     return totalDist
@@ -123,15 +129,18 @@ def stop_program():
     print("Exiting...")
     exit()
 
+
 def stop_all_threads():
     stop_threads = True
     M_Rot.stop_thread()
+
 
 # Create a function and return the linear postion for the arm (r coordinate val)
 def draw_function(maxDisp, currentTheta, rev_steps):
     # Function that can be modified to create different patterns
     pos = round(maxDisp * abs(math.cos(math.radians(360 * currentTheta / rev_steps))))
     return pos
+
 
 def check_collision():
     while not stop_threads:
@@ -141,7 +150,6 @@ def check_collision():
             stop_all_threads()
 
 
-# Main function for the program
 def main():
     # Sand Table hardware constants
     rev_steps = 3200
@@ -182,5 +190,6 @@ def main():
 
     except KeyboardInterrupt:
         stop_program()
+
 
 main()
