@@ -54,10 +54,12 @@ def run_MRotate():
     print("M_Rot state: {}".format(not stop_motors))
     M_Rot.SetMicroStep('software','1/4step')
     rot_delay = 0.0015
-    rot_steps = 100 # One full revolution
+    forward_steps = 500
+    backward_steps = 200
 
     while not stop_threads:
-        M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay=rot_delay)
+        M_Rot.TurnStep_ROT(Dir='forward', steps=forward_steps, stepdelay=rot_delay)
+        M_Rot.TurnStep_ROT(Dir='backward', steps=backward_steps, stepdelay=rot_delay)
 
     M_Rot.Stop()
     print("M_Rot state: {}".format(not stop_motors))
