@@ -3,7 +3,6 @@ from DRV8825 import DRV8825
 import threading
 import math
 from time import sleep
-import keyboard
 
 from rpi_ws281x import PixelStrip, Color
 import led_strip # from led_strip.py
@@ -14,11 +13,6 @@ stop_threads = False # Flag for stopping all threads
 # Motor driver object init
 M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20), stop_event=False)
 M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27), stop_event=False)
-
-# Create seperate threads
-MRot = threading.Thread(target=run_MRotate)
-LStrip = threading.Thread(target=run_LedStrip)
-End_stops = threading.Thread(target=check_collision)
 
 # Create NeoPixel object with appropriate configuration.
 strip = led_strip.strip_init()
@@ -148,6 +142,12 @@ def check_collision():
             M_Rot.Stop()
             M_Lin.Stop()
             stop_all_threads()
+
+
+# Create seperate threads
+MRot = threading.Thread(target=run_MRotate)
+LStrip = threading.Thread(target=run_LedStrip)
+End_stops = threading.Thread(target=check_collision)
 
 
 def main():
