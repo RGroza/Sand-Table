@@ -8,6 +8,7 @@ from rpi_ws281x import PixelStrip, Color
 import led_strip # from led_strip.py
 
 
+stop_motors = False # Flag for stopping motors at collision
 stop_threads = False # Flag for stopping all threads
 
 # Motor driver object init
@@ -28,38 +29,38 @@ GPIO.setup(inner_switch, GPIO.IN)
 
 # Run through the LED strip routine
 def run_LedStrip():
-    print("LED stop_threads: " + str(stop_threads))
+    print("LED state: {}".format(not stop_all_threads))
     strip.begin()
 
-    while not stop_threads:
-        print('Color wipe animations.')
+    while not stop_all_threads:
+        print('LED Color wipe')
         led_strip.colorWipe(strip, led_strip.Color(255, 0, 0))  # Red wipe
         led_strip.colorWipe(strip, led_strip.Color(0, 255, 0))  # Blue wipe
         led_strip.colorWipe(strip, led_strip.Color(0, 0, 255))  # Green wipe
-        print('Theater chase animations.')
+        print('LED Theater chase')
         led_strip.theaterChase(strip, led_strip.Color(127, 127, 127))  # White theater chase
         led_strip.theaterChase(strip, led_strip.Color(127, 0, 0))  # Red theater chase
         led_strip.theaterChase(strip, led_strip.Color(0, 0, 127))  # Blue theater chase
-        print('Rainbow animations.')
+        print('LED Rainbow animations')
         led_strip.rainbow(strip)
         led_strip.rainbowCycle(strip)
         led_strip.theaterChaseRainbow(strip)
 
-    print("LED stop_threads: " + str(stop_threads))
+    print("LED state: {}".format(not stop_all_threads))
 
 
 # Functions defined for each motor thread
 def run_MRotate():
-    print("ROT stop_threads: " + str(stop_threads))
+    print("M_Rot state: {}".format(not stop_motors))
     M_Rot.SetMicroStep('software','1/4step')
     rot_delay = 0.0015
-    rot_steps = 3200 # One full revolution
+    rot_steps = 100 # One full revolution
 
     while not stop_threads:
         M_Rot.TurnStep_ROT(Dir='forward', steps=rot_steps, stepdelay=rot_delay)
 
     M_Rot.Stop()
-    print("ROT stop_threads: " + str(stop_threads))
+    print("M_Rot state: {}".format(not stop_motors))
 
 
 def run_MLinear(num_steps, delay):
@@ -86,7 +87,7 @@ def calibrate_slide():
         positions = (minPos, maxPos)
         print(positions)
         totalDist = maxPos - minPos - center_to_min - outer_to_max
-        print ("Travel dist: " + str(totalDist))
+        print ("Travel distance: " + str(totalDist))
 
         sleep(.5)
 
@@ -141,7 +142,7 @@ def check_collision():
         if GPIO.input(inner_switch) == 0 or GPIO.input(outer_switch) == 0:
             M_Rot.Stop()
             M_Lin.Stop()
-            stop_all_threads()
+            stop_motors()
 
 
 # Create seperate threads
@@ -173,8 +174,8 @@ def main():
 
         MRot.start()
         print("\nROT Thread Started")
-        LStrip.start()
-        print("\nLed Strip Thread Started")
+        # LStrip.start()
+        # print("\nLed Strip Thread Started")
         End_stops.start()
         print("\nChecking collision")
 
