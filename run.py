@@ -9,7 +9,7 @@ import led_strip # from led_strip.py
 
 from utils.process_files import process_files
 
-stop_motors = False # Flag for stopping motors at collision
+stop_motor_threads = False # Flag for stopping motors at collision
 stop_all_threads = False # Flag for stopping all threads
 MRot_done = False
 MLin_done = False
@@ -53,15 +53,15 @@ def run_LedStrip():
 
 
 # Functions defined for each motor thread
-def run_MRotate(steps, delay):
+def run_MRot(steps, delay):
     print("M_Rot state: {}".format(not stop_motors))
     M_Rot.set_microstep('software','1/4step')
 
     if (steps > 0):
         M_Rot.turn_steps(Dir='forward', steps=steps, stepdelay=delay)
     else:
-        M_Rot.turn_step(Dir='backward', steps=steps, stepdelay=delay)
-    M_Rot.Stop()
+        M_Rot.turn_steps(Dir='backward', steps=steps, stepdelay=delay)
+    M_Rot.stop()
 
     MRot_done = True
 
@@ -69,7 +69,7 @@ def run_MRotate(steps, delay):
     print("M_Rot state: {}".format(not stop_motors))
 
 
-def run_MLinear(num_steps, delay):
+def run_MLin(steps, delay):
     print("M_Lin state: {}".format(not stop_motors))
     M_Rot.set_microstep('software','1/4step')
 
@@ -78,7 +78,7 @@ def run_MLinear(num_steps, delay):
     else:
         M_Lin.turn_steps(Dir='backward', steps=steps, stepdelay=delay)
 
-    M_Lin.Stop()
+    M_Lin.stop()
 
     MLin_done = True
 
@@ -123,27 +123,32 @@ def stop_program():
 
     led_strip.colorWipe(strip, Color(0, 0, 0), 10)
     MRot.join()
+    MLin.join()
     LStrip.join()
-    End_stops.join()
 
-    M_Rot.Stop()
-    M_Lin.Stop()
+    M_Rot.stop()
+    M_Lin.stop()
     print("\nMotors stopped")
     GPIO.cleanup()
     print("Exiting...")
     exit()
 
 
+def stop_motors():
+    MRot_done = True
+    MLin_done = True
+
+
 def check_collision():
         if GPIO.input(inner_switch) == 0 or GPIO.input(outer_switch) == 0:
-            M_Rot.Stop()
-            M_Lin.Stop()
             stop_motors()
+            M_Rot.stop()
+            M_Lin.stop()
 
 
 # Create seperate threads
-MRot = threading.Thread(target=run_MRotate)
-MLin = threading.Thread(target=run_MLinear)
+MRot = threading.Thread(target=run_MRot)
+MLin = threading.Thread(target=run_MLin)
 LStrip = threading.Thread(target=run_LedStrip)
 
 
