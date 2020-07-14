@@ -3,6 +3,9 @@ import numpy as np
 from os import listdir
 from os.path import isfile, join
 
+Rot_delay_range = (0.005, 0.001)
+Lin_delay_range = (0.003, 0.0005)
+
 def get_files(folder):
     onlyfiles = [f for f in listdir(folder) if isfile(join(folder, f))]
     print("Tracks found: " + str(onlyfiles).replace('[', '').replace(']', ''))
@@ -85,4 +88,5 @@ def process_tracks(debug=False):
 
 
 if __name__ == '__main__':
-    process_tracks(True)
+    print("Running")
+    process_tracks(debug=True)

@@ -17,7 +17,7 @@ class DRV8825():
         self.step_pin = step_pin
         self.enable_pin = enable_pin
         self.mode_pins = mode_pins
-        self.stop_event = False
+        self.running = True
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
@@ -53,7 +53,7 @@ class DRV8825():
 
         # print("Control mode: ",mode)
         if (mode == ControlMode[1]):
-            # print("set pins")
+            print("set pins: {}".format(stepformat))
             self.digital_write(self.mode_pins, microstep[stepformat])
 
 
@@ -75,7 +75,7 @@ class DRV8825():
             return
 
         # print("turn step: ",steps)
-        while steps > 0 and not self.stop_event:
+        while steps > 0 and self.running:
             self.digital_write(self.step_pin, True)
             time.sleep(stepdelay)
             self.digital_write(self.step_pin, False)
@@ -99,7 +99,7 @@ class DRV8825():
 
         # print("turn step: ",steps)
         pos = 0
-        while GPIO.input(limit_switch) == 1 and not self.stop_event:
+        while GPIO.input(limit_switch) == 1 and self.running:
             self.digital_write(self.step_pin, True)
             time.sleep(stepdelay)
             self.digital_write(self.step_pin, False)
@@ -129,7 +129,7 @@ class DRV8825():
             return
 
         # print("turn step: ",steps)
-        while steps > 0 and not self.stop_event:
+        while steps > 0 and self.running:
             if GPIO.input(limit_switch) == 0:
                 return False
             self.digital_write(self.step_pin, True)

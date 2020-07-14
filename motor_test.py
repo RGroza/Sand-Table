@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-from DRV8825 import DRV8825
+from utils.DRV8825 import DRV8825
 import threading
 from time import sleep
 

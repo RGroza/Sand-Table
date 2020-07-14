@@ -5,12 +5,10 @@ import math
 from time import sleep
 
 from rpi_ws281x import PixelStrip, Color
-import led_strip
+from led_strip import *
 
 from utils.process_files import process_tracks
 
-stop_motor_threads = False # Flag for stopping motors at collision
-stop_all_threads = False # Flag for stopping all threads
 MRot_done = False
 MLin_done = False
 
@@ -19,7 +17,8 @@ M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
 M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
 # Create NeoPixel object with appropriate configuration.
-strip = led_strip.strip_init()
+strip = strip_init()
+strip_thread = LedStripThread()
 
 # Setup for limit switches
 outer_switch = 5
@@ -32,34 +31,27 @@ GPIO.setup(inner_switch, GPIO.IN)
 
 # Run through the LED strip routine
 def run_LedStrip():
-    print("LED state: {}".format(not stop_all_threads))
     strip.begin()
 
-    while not stop_all_threads:
-        print('LED Color wipe')
-        led_strip.colorWipe(strip, led_strip.Color(255, 0, 0))  # Red wipe
-        led_strip.colorWipe(strip, led_strip.Color(0, 255, 0))  # Blue wipe
-        led_strip.colorWipe(strip, led_strip.Color(0, 0, 255))  # Green wipe
-        print('LED Theater chase')
-        led_strip.theaterChase(strip, led_strip.Color(127, 127, 127))  # White theater chase
-        led_strip.theaterChase(strip, led_strip.Color(127, 0, 0))  # Red theater chase
-        led_strip.theaterChase(strip, led_strip.Color(0, 0, 127))  # Blue theater chase
-        print('LED Rainbow animations')
-        led_strip.rainbow(strip)
-        led_strip.rainbowCycle(strip)
-        led_strip.theaterChaseRainbow(strip)
-
-    print("LED state: {}".format(not stop_all_threads))
+    print('LED Color wipe')
+    strip_thread.colorWipe(strip, Color(255, 0, 0))  # Red wipe
+    strip_thread.colorWipe(strip, Color(0, 255, 0))  # Blue wipe
+    strip_thread.colorWipe(strip, Color(0, 0, 255))  # Green wipe
+    print('LED Theater chase')
+    strip_thread.theaterChase(strip, Color(127, 127, 127))  # White theater chase
+    strip_thread.theaterChase(strip, Color(127, 0, 0))  # Red theater chase
+    strip_thread.theaterChase(strip, Color(0, 0, 127))  # Blue theater chase
+    print('LED Rainbow animations')
+    strip_thread.rainbow(strip)
+    strip_thread.rainbowCycle(strip)
+    strip_thread.theaterChaseRainbow(strip)
 
 
 # Functions defined for each motor thread
 def run_MRot(steps, delay, debug=False):
-    if debug:
-        print("M_Rot state: {}".format(not stop_motors))
-
     M_Rot.set_microstep('software','1/4step')
 
-    if delay != None or steps == 0:
+    if steps != 0 and delay != None:
         if steps > 0:
             M_Rot.turn_steps(Dir='forward', steps=steps, stepdelay=delay)
         else:
@@ -70,15 +62,12 @@ def run_MRot(steps, delay, debug=False):
 
     if debug:
         print("M_Rot done!")
-        print("M_Rot state: {}".format(not stop_motors))
 
 
 def run_MLin(steps, delay, debug=False):
-    if debug:
-        print("M_Lin state: {}".format(not stop_motors))
     M_Rot.set_microstep('software','1/4step')
 
-    if delay != None or steps == 0:
+    if steps != 0 and delay != None:
         if steps > 0:
             M_Lin.turn_steps(Dir='forward', steps=steps, stepdelay=delay)
         else:
@@ -89,7 +78,6 @@ def run_MLin(steps, delay, debug=False):
 
     if debug:
         print("M_Lin done!")
-        print("M_Lin state: {}".format(not stop_motors))
 
 
 # Calibrates the linear slide arm before starting the main program routine
@@ -126,25 +114,21 @@ def calibrate_slide():
 
 # Stops the motors and LED strip, and joins the threads
 def stop_program():
-    stop_all_threads = True
 
-    led_strip.colorWipe(strip, Color(0, 0, 0), 10)
-    MRot.join()
-    MLin.join()
+    stop_motors()
+
+    strip_thread.colorWipe(strip, Color(0, 0, 0))
     LStrip.join()
 
-    M_Rot.stop()
-    M_Lin.stop()
-    print("\n---------- Motors Stopped! ----------")
     GPIO.cleanup()
     print("Exiting...")
     exit()
 
 
 def stop_motors():
-    M_Rot.stop_event = True
+    M_Rot.running = False
+    M_Lin.running = False
     M_Rot.stop()
-    M_Lin.stop_event = True
     M_Lin.stop()
     print("\n---------- Motors Stopped! ----------")
 
