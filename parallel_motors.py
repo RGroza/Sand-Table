@@ -21,23 +21,23 @@ class MotorThreads:
         M_Rot.stop()
 
     def run_MLin(self, delay, step_size):
-        M_Lin.turn_steps(Dir='forward', steps=1900, stepdelay=delay)
+        M_Lin.turn_steps(Dir='forward', steps=1800, stepdelay=delay)
         sleep(1)
-        M_Lin.turn_steps(Dir='backward', steps=1900, stepdelay=delay)
+        M_Lin.turn_steps(Dir='backward', steps=1800, stepdelay=delay)
 
         M_Lin.stop()
         self.running = False
 
-delays = [0.004, 0.003, 0.002, 0.001, 0.0005]
-# step_sizes = ['fullstep', 'halfstep', '1/4step', '1/8step', '1/16step', '1/32step']
+delays = [0.01, 0.004, 0.003, 0.002, 0.001, 0.0005]
+step_sizes = ['fullstep', '1/4step', '1/32step']
 
 try:
     motors = MotorThreads()
-    for delay in delays:
-        print("Delay: {}".format(delay))
+    for s in step_sizes:
+        print("Step: {}".format(s))
 
-        MRot = threading.Thread(target=motors.run_MRot, args=(delay, '1/4step',))
-        MLin = threading.Thread(target=motors.run_MLin, args=(delay, '1/4step',))
+        MRot = threading.Thread(target=motors.run_MRot, args=(0.0015, s,))
+        MLin = threading.Thread(target=motors.run_MLin, args=(0.0015, s,))
 
         print("...")
         MRot.start()
@@ -47,6 +47,7 @@ try:
         MLin.join()
 
         sleep(3)
+        motors.running = True
 except KeyboardInterrupt:
     print("\nMotors stopped")
     M_Rot.stop()
