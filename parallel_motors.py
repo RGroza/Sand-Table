@@ -10,17 +10,16 @@ M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
 def run_MRot(delay, step_size):
     M_Rot.set_microstep('software', step_size)
-    print("Step size: {}".format(step_size))
 
-    while not stop_threads
-        M_Rot.turn_steps(Dir='forward', steps=10, stepdelay=delay)
+    while not stop_threads:
+        M_Rot.turn_steps(Dir='forward', steps=1, stepdelay=delay)
 
     M_Rot.stop()
 
 def run_MLin(delay, step_size):
-    M_Lin.turn_steps(Dir='forward', steps=1928, stepdelay=delay)
+    M_Lin.turn_steps(Dir='forward', steps=1900, stepdelay=delay)
     sleep(1)
-    M_Lin.turn_steps(Dir='backward', steps=1928, stepdelay=delay)
+    M_Lin.turn_steps(Dir='backward', steps=1900, stepdelay=delay)
 
     M_Lin.stop()
     stop_threads = True
@@ -32,8 +31,8 @@ try:
     for delay in delays:
         print("Delay: {}".format(delay))
 
-        MRot = threading.Thread(target=run_MRot, args=(step[0], step[2],))
-        MLin = threading.Thread(target=run_MLin, args=(step[1], step[3],))
+        MRot = threading.Thread(target=run_MRot, args=(delay, '1/4step',))
+        MLin = threading.Thread(target=run_MLin, args=(delay, '1/4step',))
 
         print("...")
         MRot.start()
@@ -45,8 +44,8 @@ try:
         sleep(3)
 except KeyboardInterrupt:
     print("\nMotors stopped")
-    M_Rot.Stop()
-    M_Lin.Stop()
+    M_Rot.stop()
+    M_Lin.stop()
     GPIO.cleanup()
     print("Exiting...")
     exit()
