@@ -71,9 +71,7 @@ def process_files(debug=False):
     files = get_files(folder)
     tracks = []
     for f in files:
-        if debug:
-            coors = get_coors(f, folder)
-
+        coors = get_coors(f, folder)
         steps = coors_to_steps(coors)
         steps_with_delays = add_delays(steps)
 
