@@ -15,7 +15,6 @@ def get_coors(filename, folder, max_lin=1928):
         content = f.readlines()
 
     lines = [line.rstrip('\n') for line in content]
-    print(lines[:29])
 
     coors = np.array([0, 0])
     for c in lines:
@@ -28,7 +27,6 @@ def get_coors(filename, folder, max_lin=1928):
             coors = np.vstack((coors, [theta, r]))
 
     min_value = coors[1:, 0].min()
-    print(min_value)
     coors[1:, 0] -= min_value
 
     return coors
@@ -68,17 +66,24 @@ def coors_to_steps(coors):
     return coors[1:] - coors[:-1]
 
 
-def process_files():
+def process_files(debug=False):
     folder = "tracks/"
     files = get_files(folder)
+    tracks = []
     for f in files:
-        coors = get_coors(f, folder)
+        if debug:
+            coors = get_coors(f, folder)
+
         steps = coors_to_steps(coors)
         steps_with_delays = add_delays(steps)
-        print(f + " coors:\n{}".format((coors[:29])))
-        print(f + " steps:\n{}".format((steps[:29])))
 
-        return steps_with_delays
+        if debug:
+            print(f + " coors:\n{}".format((coors[:29])))
+            print(f + " steps:\n{}".format((steps[:29])))
+
+        tracks.append(steps_with_delays)
+
+    return tracks
 
 
-process_files()
+process_files(True)

@@ -109,10 +109,11 @@ def calibrate_slide():
 
         if test_inner and test_outer:
             calibrated = True
+            print("Calibration Passed!")
+            sleep(.5)
+            M_Lin.turn_steps(Dir='backward', steps=totalDist, stepdelay=delay)
         else:
             print("Calibration Failed! Trying again...")
-
-    print("Calibration Passed!")
 
     return totalDist
 
@@ -158,7 +159,7 @@ def main():
     try:
         maxDisp = calibrate_slide() - 200
 
-        LStrip.start()
+        # LStrip.start()
 
         for track in tracks:
             for step in track:
