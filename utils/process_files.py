@@ -66,7 +66,7 @@ def coors_to_steps(coors):
     return coors[1:] - coors[:-1]
 
 
-def process_files(debug=False):
+def process_tracks(debug=False):
     folder = "tracks/"
     files = get_files(folder)
     tracks = []
@@ -84,4 +84,4 @@ def process_files(debug=False):
     return tracks
 
 
-process_files(True)
+process_tracks(True)

@@ -5,9 +5,9 @@ import math
 from time import sleep
 
 from rpi_ws281x import PixelStrip, Color
-import led_strip # from led_strip.py
+import led_strip
 
-from utils.process_files import process_files
+from utils.process_files import process_tracks
 
 stop_motor_threads = False # Flag for stopping motors at collision
 stop_all_threads = False # Flag for stopping all threads
@@ -53,37 +53,43 @@ def run_LedStrip():
 
 
 # Functions defined for each motor thread
-def run_MRot(steps, delay):
-    print("M_Rot state: {}".format(not stop_motors))
+def run_MRot(steps, delay, debug=False):
+    if debug:
+        print("M_Rot state: {}".format(not stop_motors))
+
     M_Rot.set_microstep('software','1/4step')
 
-    if (steps > 0):
-        M_Rot.turn_steps(Dir='forward', steps=steps, stepdelay=delay)
-    else:
-        M_Rot.turn_steps(Dir='backward', steps=steps, stepdelay=delay)
-    M_Rot.stop()
+    if delay != None or steps == 0:
+        if steps > 0:
+            M_Rot.turn_steps(Dir='forward', steps=steps, stepdelay=delay)
+        else:
+            M_Rot.turn_steps(Dir='backward', steps=steps, stepdelay=delay)
 
+    M_Rot.stop()
     MRot_done = True
 
-    print("M_Rot done!")
-    print("M_Rot state: {}".format(not stop_motors))
+    if debug:
+        print("M_Rot done!")
+        print("M_Rot state: {}".format(not stop_motors))
 
 
-def run_MLin(steps, delay):
-    print("M_Lin state: {}".format(not stop_motors))
+def run_MLin(steps, delay, debug=False):
+    if debug:
+        print("M_Lin state: {}".format(not stop_motors))
     M_Rot.set_microstep('software','1/4step')
 
-    if (steps > 0):
-        M_Lin.turn_steps(Dir='forward', steps=steps, stepdelay=delay)
-    else:
-        M_Lin.turn_steps(Dir='backward', steps=steps, stepdelay=delay)
+    if delay != None or steps == 0:
+        if steps > 0:
+            M_Lin.turn_steps(Dir='forward', steps=steps, stepdelay=delay)
+        else:
+            M_Lin.turn_steps(Dir='backward', steps=steps, stepdelay=delay)
 
     M_Lin.stop()
-
     MLin_done = True
 
-    print("M_Lin done!")
-    print("M_Lin state: {}".format(not stop_motors))
+    if debug:
+        print("M_Lin done!")
+        print("M_Lin state: {}".format(not stop_motors))
 
 
 # Calibrates the linear slide arm before starting the main program routine
@@ -129,22 +135,24 @@ def stop_program():
 
     M_Rot.stop()
     M_Lin.stop()
-    print("\nMotors stopped")
+    print("\n---------- Motors Stopped! ----------")
     GPIO.cleanup()
     print("Exiting...")
     exit()
 
 
 def stop_motors():
-    MRot_done = True
-    MLin_done = True
+    M_Rot.stop_event = True
+    M_Rot.stop()
+    M_Lin.stop_event = True
+    M_Lin.stop()
+    print("\n---------- Motors Stopped! ----------")
 
 
 def check_collision():
         if GPIO.input(inner_switch) == 0 or GPIO.input(outer_switch) == 0:
+            print("\n---------- Collision Detected! ----------")
             stop_motors()
-            M_Rot.stop()
-            M_Lin.stop()
 
 
 # Create seperate threads
@@ -154,7 +162,7 @@ LStrip = threading.Thread(target=run_LedStrip)
 
 
 def main():
-    tracks = process_files()
+    tracks = process_tracks()
 
     try:
         maxDisp = calibrate_slide() - 200
