@@ -21,6 +21,8 @@ class MotorThreads:
         M_Rot.stop()
 
     def run_MLin(self, delay, step_size):
+        M_Lin.set_microstep('software', step_size)
+
         M_Lin.turn_steps(Dir='forward', steps=1800, stepdelay=delay)
         sleep(1)
         M_Lin.turn_steps(Dir='backward', steps=1800, stepdelay=delay)
