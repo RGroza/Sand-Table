@@ -84,4 +84,5 @@ def process_tracks(debug=False):
     return tracks
 
 
-process_tracks(True)
+if __name__ == '__main__':
+    process_tracks(True)

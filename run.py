@@ -15,8 +15,8 @@ MRot_done = False
 MLin_done = False
 
 # Motor driver object init
-M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20), stop_event=False)
-M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27), stop_event=False)
+M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
+M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
 # Create NeoPixel object with appropriate configuration.
 strip = led_strip.strip_init()
