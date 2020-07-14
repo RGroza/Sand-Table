@@ -23,14 +23,14 @@ class MotorThreads:
     def run_MLin(self, delay, step_size):
         M_Lin.set_microstep('software', step_size)
 
-        M_Lin.turn_steps(Dir='forward', steps=1800, stepdelay=delay)
+        M_Lin.turn_steps(Dir='forward', steps=2000, stepdelay=delay)
         sleep(1)
-        M_Lin.turn_steps(Dir='backward', steps=1800, stepdelay=delay)
+        M_Lin.turn_steps(Dir='backward', steps=2000, stepdelay=delay)
 
         M_Lin.stop()
         self.running = False
 
-delays = [0.01, 0.004, 0.003, 0.002, 0.001, 0.0005]
+delays = [0.0005, 0.0003] # [0.01, 0.004, 0.003, 0.002, 0.001, 0.0005]
 step_sizes = ['fullstep', '1/4step', '1/32step']
 
 try:
@@ -38,8 +38,8 @@ try:
     for d in delays:
         print("Delays: {}".format(d))
 
-        MRot = threading.Thread(target=motors.run_MRot, args=(d, 'fullstep',))
-        MLin = threading.Thread(target=motors.run_MLin, args=(d, 'fullstep',))
+        MRot = threading.Thread(target=motors.run_MRot, args=(d, '1/8step',))
+        MLin = threading.Thread(target=motors.run_MLin, args=(d, '1/8step',))
 
         print("...")
         MRot.start()
