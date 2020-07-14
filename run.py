@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-from DRV8825 import DRV8825
+from utils.DRV8825 import DRV8825
 import threading
 import math
 from time import sleep
@@ -155,11 +155,8 @@ def check_collision():
             stop_motors()
 
 
-# Create seperate threads
-MRot = threading.Thread(target=run_MRot)
-MLin = threading.Thread(target=run_MLin)
+# Create LStrip threads
 LStrip = threading.Thread(target=run_LedStrip)
-
 
 def main():
     tracks = process_tracks()
@@ -176,6 +173,7 @@ def main():
                 MLin_done = False
                 MRot_done = False
 
+                # Create motor threads
                 MRot = threading.Thread(target=run_MRot, args=(step[0], step[2],))
                 MLin = threading.Thread(target=run_MLin, args=(step[1], step[3],))
 
