@@ -35,11 +35,11 @@ step_sizes = ['fullstep', '1/4step', '1/32step']
 
 try:
     motors = MotorThreads()
-    for s in step_sizes:
-        print("Step: {}".format(s))
+    for d in delays:
+        print("Delays: {}".format(d))
 
-        MRot = threading.Thread(target=motors.run_MRot, args=(0.0015, s,))
-        MLin = threading.Thread(target=motors.run_MLin, args=(0.0015, s,))
+        MRot = threading.Thread(target=motors.run_MRot, args=(d, 'fullstep',))
+        MLin = threading.Thread(target=motors.run_MLin, args=(d, 'fullstep',))
 
         print("...")
         MRot.start()
