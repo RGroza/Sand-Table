@@ -104,8 +104,8 @@ def calibrate_slide():
         if test_inner:
             calibrated = True
             print("Calibration Passed!")
-            sleep(.5)
-            M_Lin.turn_steps(Dir='backward', steps=totalDist, stepdelay=delay)
+            # sleep(.5)
+            # M_Lin.turn_steps(Dir='backward', steps=totalDist, stepdelay=delay)
         else:
             print("Calibration Failed! Trying again...")
 
