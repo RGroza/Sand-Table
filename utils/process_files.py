@@ -26,7 +26,7 @@ def get_coors(max_disp, filename, folder):
         r = float(c[c.find(" ")+1:])
 
         if (theta != 0):
-            theta = int(microstep_size * 3200 * theta)
+            theta = int(microstep_size * 3200 * theta / 6.28318531)
             r = int(max_disp * r)
             coors = np.vstack((coors, [theta, r]))
 
