@@ -49,17 +49,26 @@ def add_delays(steps):
 
     default_delay = 0.001
     min_delay = 0.0001
+    max_delay = 0.01
 
     delays = np.array([0, 0])
     for s in steps:
-        elapsed_time = abs(s[0]) * default_delay
-        if elapsed_time > 0 and elapsed_time / abs(s[1]) >= min_delay:
+        if s[0] == 0:
+            Rot_delay = None
+            Lin_delay = default_delay
+        elif s[1] == 0:
             Rot_delay = default_delay
-            Lin_delay = round(elapsed_time / abs(s[1]), 8) if s[1] != 0 else None
+            Lin_delay = None
         else:
-            min_time = abs(s[1]) * min_delay
-            Rot_delay = round(min_time / abs(s[0]), 8) if s[0] != 0 else None
-            Lin_delay = round(min_delay, 8)
+            Rot_elapsed_time = abs(s[0]) * default_delay
+            Lin_elapsed_time = abs(s[1]) * default_delay
+            if Rot_elapsed_time / abs(s[1]) >= min_delay and Rot_elapsed_time / abs(s[1]) <= max_delay:
+                Rot_delay = default_delay
+                Lin_delay = round(Rot_elapsed_time / abs(s[1]), 8) if s[1] != 0 else None
+            else:
+                min_time = abs(s[1]) * min_delay
+                Rot_delay = round(min_time / abs(s[0]), 8) if s[0] != 0 else None
+                Lin_delay = round(min_delay, 8)
 
         delays = np.vstack((delays, [Rot_delay, Lin_delay]))
 
