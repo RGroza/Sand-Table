@@ -53,11 +53,11 @@ def add_delays(steps):
     delays = np.array([0, 0])
     for s in steps:
         if s[0] > s[1]:
-            Rot_delay = round(s[0] * min_delay / s[1], 6) if s[1] != 0 else None
-            Lin_delay = min_delay
-        elif s[1] > s[0]:
             Rot_delay = min_delay
-            Lin_delay = round(s[1] * min_delay / s[0], 6) if s[0] != 0 else None
+            Lin_delay = round(s[0] * min_delay / s[1], 6) if s[1] != 0 else None
+        elif s[1] > s[0]:
+            Rot_delay = round(s[1] * min_delay / s[0], 6) if s[0] != 0 else None
+            Lin_delay = min_delay
         else:
             Rot_delay = min_delay
             Lin_delay = min_delay
