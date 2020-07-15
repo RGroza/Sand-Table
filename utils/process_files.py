@@ -56,7 +56,7 @@ def add_delays(steps):
         if s[0] > s[1]:
             Rot_delay = s[0] * min_delay / s[1] if s[1] != 0 else None
             Lin_delay = min_delay
-        else if s[1] > s[0]:
+        elif s[1] > s[0]:
             Rot_delay = min_delay
             Lin_delay = s[1] * min_delay / s[0] if s[0] != 0 else None
         else:
