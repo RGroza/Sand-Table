@@ -55,9 +55,9 @@ def run_LedStrip():
 def run_MRot(steps, delay, debug=False):
     if steps != 0 and delay != None:
         if steps > 0:
-            M_Rot.turn_steps(Dir='forward', steps=steps, stepdelay=delay)
+            M_Rot.turn_steps(Dir='forward', steps=abs(steps), stepdelay=delay)
         else:
-            M_Rot.turn_steps(Dir='backward', steps=steps, stepdelay=delay)
+            M_Rot.turn_steps(Dir='backward', steps=abs(steps), stepdelay=delay)
 
     M_Rot.stop()
     MRot_done = True
@@ -69,9 +69,9 @@ def run_MRot(steps, delay, debug=False):
 def run_MLin(steps, delay, debug=False):
     if steps != 0 and delay != None:
         if steps > 0:
-            M_Lin.turn_steps(Dir='forward', steps=steps, stepdelay=delay)
+            M_Lin.turn_steps(Dir='forward', steps=abs(steps), stepdelay=delay)
         else:
-            M_Lin.turn_steps(Dir='backward', steps=steps, stepdelay=delay)
+            M_Lin.turn_steps(Dir='backward', steps=abs(steps), stepdelay=delay)
 
     M_Lin.stop()
     MLin_done = True
