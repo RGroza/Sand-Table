@@ -25,6 +25,7 @@ class MotorThreads:
 
         for s in range(10):
             d_new = delay - delay * .5 / (s + 1)
+            print(d_new)
             M_Lin.turn_steps(Dir='forward', steps=300, stepdelay=d_new)
         sleep(0.1)
         for s in range(10):
