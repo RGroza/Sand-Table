@@ -48,7 +48,7 @@ def coors_to_steps(coors):
 
 def add_delays(steps):
 
-    min_delay = 0.0002
+    min_delay = 0.001
 
     delays = np.array([0, 0])
     for s in steps:
