@@ -4,8 +4,7 @@ from os import listdir
 from os.path import isfile, join
 
 
-max_lin = max_disp
-microstep_size = 8
+microstep_size = 8 # 1/8step size
 
 
 def get_files(folder):
@@ -15,7 +14,7 @@ def get_files(folder):
     return onlyfiles
 
 
-def get_coors(filename, folder):
+def get_coors(max_disp, filename, folder):
     with open(folder + filename, "r") as f:
         content = f.readlines()
 
@@ -28,7 +27,7 @@ def get_coors(filename, folder):
 
         if (theta != 0):
             theta = int(microstep_size * 3200 * theta)
-            r = int(max_lin * r)
+            r = int(max_disp * r)
             coors = np.vstack((coors, [theta, r]))
 
     min_value = coors[1:, 0].min()
@@ -37,8 +36,8 @@ def get_coors(filename, folder):
     return coors
 
 
-def get_steps(filename, folder):
-    coors = get_coors(filename, folder)
+def get_steps(max_disp, filename, folder):
+    coors = get_coors(max_disp, filename, folder)
 
     return coors_to_steps(coors)
 
@@ -75,7 +74,7 @@ def process_tracks(max_disp, folder="tracks/", debug=False):
     files = get_files(folder)
     tracks = []
     for f in files:
-        steps = get_steps(f, folder)
+        steps = get_steps(max_disp, f, folder)
         steps_with_delays = add_delays(steps)
 
         if debug:
@@ -88,4 +87,4 @@ def process_tracks(max_disp, folder="tracks/", debug=False):
 
 
 if __name__ == '__main__':
-    process_tracks(folder="../tracks/", debug=True)
+    process_tracks(50000, folder="../tracks/", debug=True)
