@@ -47,19 +47,19 @@ def get_steps(filename, folder):
 
 def add_delays(steps):
 
-    default_speed = 0.001
-    max_speed = 0.0001
+    default_delay = 0.001
+    min_delay = 0.0001
 
     delays = np.array([0, 0])
     for s in steps:
-        elapsed_time = abs(s[0]) / default_speed
-        if elapsed_time > 0 and abs(s[1]) / elapsed_time <= max_speed:
-            Rot_delay = round(1 / default_speed, 8)
+        elapsed_time = abs(s[0]) * default_delay
+        if elapsed_time > 0 and elapsed_time / abs(s[1]) >= min_delay:
+            Rot_delay = default_delay
             Lin_delay = round(elapsed_time / abs(s[1]), 8) if s[1] != 0 else None
         else:
-            min_time = abs(s[1]) / max_speed
+            min_time = abs(s[1]) * min_delay
             Rot_delay = round(min_time / abs(s[0]), 8) if s[0] != 0 else None
-            Lin_delay = round(1 / max_speed, 8)
+            Lin_delay = round(min_delay, 8)
 
         delays = np.vstack((delays, [Rot_delay, Lin_delay]))
 
