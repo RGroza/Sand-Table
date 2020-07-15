@@ -4,10 +4,8 @@ from os import listdir
 from os.path import isfile, join
 
 
-max_lin = 15000
+max_lin = 10000
 microstep_size = 8
-Rot_delay_range = (0.01, 0.0001)
-Lin_delay_range = (0.01, 0.0001)
 
 
 def get_files(folder):
@@ -45,6 +43,10 @@ def get_steps(filename, folder):
     return coors_to_steps(coors)
 
 
+def coors_to_steps(coors):
+    return coors[1:] - coors[:-1]
+
+
 def add_delays(steps):
 
     min_delay = 0.00001
@@ -52,11 +54,14 @@ def add_delays(steps):
     delays = np.array([0, 0])
     for s in steps:
         if s[0] > s[1]:
-            Rot_delay = s[0] * min_delay / s[1]
+            Rot_delay = s[0] * min_delay / s[1] if s[1] != 0 else None
             Lin_delay = min_delay
+        else if s[1] > s[0]:
+            Rot_delay = min_delay
+            Lin_delay = s[1] * min_delay / s[0] if s[0] != 0 else None
         else:
             Rot_delay = min_delay
-            Lin_delay = s[1] * min_delay / s[0]
+            Lin_delay = min_delay
 
         delays = np.vstack((delays, [Rot_delay, Lin_delay]))
 
@@ -66,21 +71,16 @@ def add_delays(steps):
     return steps_with_delays
 
 
-def coors_to_steps(coors):
-    return coors[1:] - coors[:-1]
-
-
 def process_tracks(folder="tracks/", debug=False):
     files = get_files(folder)
     tracks = []
     for f in files:
-        coors = get_coors(f, folder)
-        steps = coors_to_steps(coors)
+        steps = get_steps(f, folder)
         steps_with_delays = add_delays(steps)
 
         if debug:
-            print(f + " coors:\n{}".format((coors[:29])))
-            print(f + " steps_with_delays:\n{}".format((steps_with_delays[:29])))
+            print(f + " steps:\n{}".format((steps[:29])))
+            print(f + " steps_with_delays:\n{}".format((round(steps_with_delays[:29], 6))))
 
         tracks.append(steps_with_delays)
 
