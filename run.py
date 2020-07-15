@@ -82,9 +82,9 @@ def run_MLin(steps, delay, debug=False):
 
 # Calibrates the linear slide arm before starting the main program routine
 def calibrate_slide():
-    delay = 0.00001
-    center_to_min = 500
-    outer_to_max = 500
+    delay = 0.0002
+    center_to_min = 200
+    outer_to_max = 200
 
     calibrated = False
 
@@ -144,7 +144,7 @@ LStrip = threading.Thread(target=run_LedStrip)
 
 def main():
     try:
-        maxDisp = calibrate_slide() - 500
+        maxDisp = calibrate_slide() - 200
         tracks = process_tracks(maxDisp)
 
         # LStrip.start()
