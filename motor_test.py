@@ -13,9 +13,9 @@ def run_MRot():
             M_Rot.set_microstep('software', step_size)
             print("Step size: {}".format(step_size))
 
-            M_Rot.turn_steps(Dir='forward', steps=1000, stepdelay=delay)
+            M_Rot.turn_steps(Dir='forward', steps=12800, stepdelay=delay)
             sleep(1)
-            M_Rot.turn_steps(Dir='backward', steps=1000, stepdelay=delay)
+            M_Rot.turn_steps(Dir='backward', steps=12800, stepdelay=delay)
             sleep(2)
 
     M_Rot.stop()
@@ -34,15 +34,15 @@ def run_MLin():
 
     M_Lin.stop()
 
-delays = [0.004, 0.003, 0.002, 0.001, 0.0005]
+delays = [0.0002]
 step_sizes = ['1/4step']
 # step_sizes = ['fullstep', 'halfstep', '1/4step', '1/8step', '1/16step', '1/32step']
 
 try:
     print("\n---------- Running M_Rot ----------")
     run_MRot()
-    print("\n---------- Running M_Lin ----------")
-    run_MLin()
+#    print("\n---------- Running M_Lin ----------")
+#    run_MLin()
 except KeyboardInterrupt:
     print("\nMotors stopped")
     M_Rot.Stop()
