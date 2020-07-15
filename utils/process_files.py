@@ -4,7 +4,7 @@ from os import listdir
 from os.path import isfile, join
 
 
-microstep_size = 8 # 1/8step size
+microstep_size = 4 # 1/8step size
 
 
 def get_files(folder):

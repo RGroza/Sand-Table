@@ -17,8 +17,8 @@ M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
 M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
 # Setting microstep size to 1/8
-M_Rot.set_microstep('software','1/8step')
-M_Lin.set_microstep('software','1/8step')
+M_Rot.set_microstep('software','1/4step')
+M_Lin.set_microstep('software','1/4step')
 
 # Create NeoPixel object with appropriate configuration.
 strip = strip_init()
