@@ -147,7 +147,7 @@ def main():
         maxDisp = calibrate_slide() - 200
         tracks = process_tracks(maxDisp)
 
-        # LStrip.start()
+        LStrip.start()
 
         for track in tracks:
             for step in track:
