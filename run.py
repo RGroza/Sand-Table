@@ -143,10 +143,9 @@ def check_collision():
 LStrip = threading.Thread(target=run_LedStrip)
 
 def main():
-    tracks = process_tracks()
-
     try:
-        maxDisp = calibrate_slide() - 200
+        maxDisp = calibrate_slide() - 250
+        tracks = process_tracks(maxDisp)
 
         # LStrip.start()
 

@@ -58,9 +58,6 @@ class DRV8825():
 
 
     def turn_steps(self, Dir, steps, stepdelay):
-
-        steps *= 8 # 1/8step microstepping
-
         if (Dir == MotorDir[0]):
             # print("forward")
             self.digital_write(self.enable_pin, 0)
@@ -115,9 +112,6 @@ class DRV8825():
             return -1*pos
 
     def turn_check_cali(self, Dir, steps, limit_switch, stepdelay):
-
-        steps *= 8 # 1/8step microstepping
-
         if (Dir == MotorDir[0]):
             # print("forward")
             self.digital_write(self.enable_pin, 0)

@@ -4,7 +4,7 @@ from os import listdir
 from os.path import isfile, join
 
 
-max_lin = 10000
+max_lin = max_disp
 microstep_size = 8
 
 
@@ -71,7 +71,7 @@ def add_delays(steps):
     return steps_with_delays
 
 
-def process_tracks(folder="tracks/", debug=False):
+def process_tracks(max_disp, folder="tracks/", debug=False):
     files = get_files(folder)
     tracks = []
     for f in files:
