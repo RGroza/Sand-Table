@@ -82,9 +82,9 @@ def run_MLin(steps, delay, debug=False):
 
 # Calibrates the linear slide arm before starting the main program routine
 def calibrate_slide():
-    delay = 0.001
-    center_to_min = 20
-    outer_to_max = 20
+    delay = 0.000001
+    center_to_min = 5000
+    outer_to_max = 5000
 
     calibrated = False
 
