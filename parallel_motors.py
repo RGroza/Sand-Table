@@ -23,14 +23,14 @@ class MotorThreads:
     def run_MLin(self, delay, step_size):
         M_Lin.set_microstep('software', step_size)
 
-        M_Lin.turn_steps(Dir='forward', steps=2000, stepdelay=delay)
+        M_Lin.turn_steps(Dir='forward', steps=3000, stepdelay=delay)
         sleep(0.1)
-        M_Lin.turn_steps(Dir='backward', steps=2000, stepdelay=delay)
+        M_Lin.turn_steps(Dir='backward', steps=3000, stepdelay=delay)
 
         M_Lin.stop()
         self.running = False
 
-delays = [0.001, 0.0005, 0.00025, 0.0001, 0.00005, 0.00001] # [0.01, 0.004, 0.003, 0.002, 0.001, 0.0005]
+delays = [0.0001, 0.00005, 0.000025] # [0.01, 0.004, 0.003, 0.002, 0.001, 0.0005]
 step_sizes = ['fullstep', '1/4step', '1/32step']
 
 try:
