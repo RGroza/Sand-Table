@@ -83,7 +83,7 @@ def process_tracks(folder="tracks/", debug=False):
 
         if debug:
             print(f + " coors:\n{}".format((coors[:29])))
-            print(f + " steps:\n{}".format((steps[:29])))
+            print(f + " steps_with_delays:\n{}".format((steps_with_delays[:29])))
 
         tracks.append(steps_with_delays)
 
