@@ -3,8 +3,12 @@ import numpy as np
 from os import listdir
 from os.path import isfile, join
 
-Rot_delay_range = (0.005, 0.001)
-Lin_delay_range = (0.003, 0.0005)
+
+max_lin = 15000
+microstep_size = 8
+Rot_delay_range = (0.01, 0.0001)
+Lin_delay_range = (0.01, 0.0001)
+
 
 def get_files(folder):
     onlyfiles = [f for f in listdir(folder) if isfile(join(folder, f))]
@@ -13,7 +17,7 @@ def get_files(folder):
     return onlyfiles
 
 
-def get_coors(filename, folder, max_lin=1928):
+def get_coors(filename, folder):
     with open(folder + filename, "r") as f:
         content = f.readlines()
 
@@ -25,7 +29,7 @@ def get_coors(filename, folder, max_lin=1928):
         r = float(c[c.find(" ")+1:])
 
         if (theta != 0):
-            theta = int(3200 * theta)
+            theta = int(microstep_size * 3200 * theta)
             r = int(max_lin * r)
             coors = np.vstack((coors, [theta, r]))
 
@@ -35,27 +39,27 @@ def get_coors(filename, folder, max_lin=1928):
     return coors
 
 
-def get_steps(filename, folder, max_lin=1928):
-    coors = get_coors(filename, folder, max_lin)
+def get_steps(filename, folder):
+    coors = get_coors(filename, folder)
 
     return coors_to_steps(coors)
 
 
 def add_delays(steps):
 
-    default_speed = 800
-    max_speed = 2000
+    default_speed = 0.001
+    max_speed = 0.0001
 
     delays = np.array([0, 0])
     for s in steps:
         elapsed_time = abs(s[0]) / default_speed
         if elapsed_time > 0 and abs(s[1]) / elapsed_time <= max_speed:
-            Rot_delay = round(1 / default_speed, 5)
-            Lin_delay = round(elapsed_time / abs(s[1]), 5) if s[1] != 0 else None
+            Rot_delay = round(1 / default_speed, 8)
+            Lin_delay = round(elapsed_time / abs(s[1]), 8) if s[1] != 0 else None
         else:
             min_time = abs(s[1]) / max_speed
-            Rot_delay = round(min_time / abs(s[0]), 5) if s[0] != 0 else None
-            Lin_delay = round(1 / max_speed, 5)
+            Rot_delay = round(min_time / abs(s[0]), 8) if s[0] != 0 else None
+            Lin_delay = round(1 / max_speed, 8)
 
         delays = np.vstack((delays, [Rot_delay, Lin_delay]))
 
