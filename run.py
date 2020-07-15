@@ -98,10 +98,10 @@ def calibrate_slide():
 
         sleep(.5)
         test_inner = M_Lin.turn_check_cali(Dir='backward', steps=totalDist + outer_to_max, limit_switch=inner_switch, stepdelay=delay)
-        sleep(.5)
-        test_outer = M_Lin.turn_check_cali(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
+        # sleep(.5)
+        # test_outer = M_Lin.turn_check_cali(Dir='forward', steps=totalDist, limit_switch=outer_switch, stepdelay=delay)
 
-        if test_inner and test_outer:
+        if test_inner:
             calibrated = True
             print("Calibration Passed!")
             sleep(.5)
