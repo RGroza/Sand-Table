@@ -16,6 +16,10 @@ MLin_done = False
 M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
 M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
 
+# Setting microstep size to 1/8
+M_Rot.set_microstep('software','1/8step')
+M_Lin.set_microstep('software','1/8step')
+
 # Create NeoPixel object with appropriate configuration.
 strip = strip_init()
 strip_thread = LedStripThread()
@@ -49,8 +53,6 @@ def run_LedStrip():
 
 # Functions defined for each motor thread
 def run_MRot(steps, delay, debug=False):
-    M_Rot.set_microstep('software','1/4step')
-
     if steps != 0 and delay != None:
         if steps > 0:
             M_Rot.turn_steps(Dir='forward', steps=steps, stepdelay=delay)
@@ -65,8 +67,6 @@ def run_MRot(steps, delay, debug=False):
 
 
 def run_MLin(steps, delay, debug=False):
-    M_Rot.set_microstep('software','1/4step')
-
     if steps != 0 and delay != None:
         if steps > 0:
             M_Lin.turn_steps(Dir='forward', steps=steps, stepdelay=delay)
@@ -144,7 +144,7 @@ LStrip = threading.Thread(target=run_LedStrip)
 
 def main():
     try:
-        maxDisp = calibrate_slide() - 250
+        maxDisp = calibrate_slide() - 500
         tracks = process_tracks(maxDisp)
 
         # LStrip.start()
