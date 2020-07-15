@@ -73,8 +73,7 @@ def coors_to_steps(coors):
     return coors[1:] - coors[:-1]
 
 
-def process_tracks(debug=False):
-    folder = "tracks/"
+def process_tracks(folder="tracks/", debug=False):
     files = get_files(folder)
     tracks = []
     for f in files:
@@ -92,5 +91,4 @@ def process_tracks(debug=False):
 
 
 if __name__ == '__main__':
-    print("Running")
-    process_tracks(debug=True)
+    process_tracks(folder="../tracks/", debug=True)
