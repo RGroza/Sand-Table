@@ -175,4 +175,5 @@ def main():
         stop_program()
 
 
-main()
+if __name__ == '__main__':
+    main()
