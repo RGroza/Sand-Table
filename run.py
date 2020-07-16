@@ -144,7 +144,8 @@ LStrip = threading.Thread(target=run_LedStrip)
 
 def main():
     try:
-        maxDisp = calibrate_slide() - 200
+        # maxDisp = calibrate_slide() - 200
+        maxDisp = 10000
         tracks = process_tracks(maxDisp)
 
         LStrip.start()
