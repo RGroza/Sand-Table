@@ -4,7 +4,7 @@ from os import listdir
 from os.path import isfile, join
 
 
-microstep_size = 4 # 1/8step size
+microstep_size = 4
 
 
 def get_files(folder):
@@ -72,9 +72,11 @@ def add_delays(steps):
 
 def process_tracks(max_disp, folder="tracks/", debug=False):
     files = get_files(folder)
+    f = "SpiralGyrations.txt"
+
     tracks = []
 
-    steps = get_steps(max_disp, "SpiralBezier.txt", folder)
+    steps = get_steps(max_disp, f, folder)
     steps_with_delays = add_delays(steps)
 
     if debug:
