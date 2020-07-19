@@ -72,18 +72,17 @@ def add_delays(steps):
 
 def process_tracks(max_disp, folder="tracks/", debug=False):
     files = get_files(folder)
-    f = "SpiralGyrations.txt"
-
     tracks = []
 
-    steps = get_steps(max_disp, f, folder)
-    steps_with_delays = add_delays(steps)
+    for f in files:
+        steps = get_steps(max_disp, f, folder)
+        steps_with_delays = add_delays(steps)
 
-    if debug:
-        print(f + " steps:\n{}".format((steps[:29])))
-        print(f + " steps_with_delays:\n{}".format((steps_with_delays[:29])))
+        if debug:
+            print(f + " steps:\n{}".format((steps[:29])))
+            print(f + " steps_with_delays:\n{}".format((steps_with_delays[:29])))
 
-    tracks.append(steps_with_delays)
+        tracks.append((f, steps_with_delays))
 
     return tracks
 
