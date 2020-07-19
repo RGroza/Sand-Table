@@ -8,8 +8,8 @@ from random import shuffle
 from rpi_ws281x import PixelStrip, Color
 from led_strip import *
 
-from utils.process_files import process_tracks
-import utils.i2c_lcd_driver
+from utils.process_files import process_files
+from utils.i2c_lcd_driver import i2c_lcd_driver
 
 MRot_done = False
 MLin_done = False
@@ -55,7 +55,7 @@ def run_LedStrip():
 
 # Functions defined for each motor thread
 def run_MRot(steps, delay, debug=False):
-    if steps != 0 and delay != None:
+    if steps != 0 and delay >= 0:
         if steps > 0:
             M_Rot.turn_steps(Dir='forward', steps=abs(steps), stepdelay=delay)
         else:
@@ -69,7 +69,7 @@ def run_MRot(steps, delay, debug=False):
 
 
 def run_MLin(steps, delay, debug=False):
-    if steps != 0 and delay != None:
+    if steps != 0 and delay >= 0:
         if steps > 0:
             M_Lin.turn_steps(Dir='forward', steps=abs(steps), stepdelay=delay)
         else:
@@ -153,19 +153,20 @@ LStrip = threading.Thread(target=run_LedStrip)
 
 def main():
     try:
-        maxDisp = calibrate_slide() - 250
-        tracks = process_tracks(maxDisp)
+        calibrate_slide()
 
         LStrip.start()
         lcd_display = i2c_lcd_driver.lcd()
-        lcd_diplay.lcd_clear()
+        lcd_display.lcd_clear()
 
-        shuffle(tracks)
+        files = process_files.get_files()
+        shuffle(files)
 
-        for t in tracks:
-            for i, step in enumerate(t[1]):
+        for f in files:
+            track = process_files.read_file(f)
+            for i, step in enumerate(track):
                 print(step)
-                lcd_display.lcd_display_string("Currently running: {}".format(t[0]))
+                lcd_display.lcd_display_string("Currently running: {}".format(f))
                 lcd_display.lcd_display_string("Progress: {}/{}".format(i, track.shape[0]), 4)
 
                 MLin_done = False
@@ -185,8 +186,7 @@ def main():
                 MRot.join()
                 MLin.join()
 
-            lcd_display.lcd_display_string("--Erasing Drawing!--"))
-            
+            lcd_display.lcd_display_string("--Erasing Drawing!--")
 
     except KeyboardInterrupt:
         stop_program()
