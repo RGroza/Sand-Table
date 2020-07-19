@@ -3,11 +3,13 @@ from utils.DRV8825 import DRV8825
 import threading
 import math
 from time import sleep
+from random import shuffle
 
 from rpi_ws281x import PixelStrip, Color
 from led_strip import *
 
 from utils.process_files import process_tracks
+import utils.i2c_lcd_driver
 
 MRot_done = False
 MLin_done = False
@@ -83,8 +85,8 @@ def run_MLin(steps, delay, debug=False):
 # Calibrates the linear slide arm before starting the main program routine
 def calibrate_slide():
     delay = 0.0002
-    center_to_min = 200
-    outer_to_max = 200
+    center_to_min = 250
+    outer_to_max = 250
 
     calibrated = False
 
@@ -110,6 +112,13 @@ def calibrate_slide():
             print("Calibration Failed! Trying again...")
 
     return totalDist
+
+
+# def erase_drawing():
+#     M_Lin.turn_until_switch(Dir='forward', limit_switch=outer_switch, stepdelay=delay)
+    
+#     MRot = threading.Thread(target=run_MRot, args=(1, 0.1,))
+#     MLin = threading.Thread(target=run_MRot, args=(1, 0.1,))
 
 
 # Stops the motors and LED strip, and joins the threads
@@ -144,15 +153,20 @@ LStrip = threading.Thread(target=run_LedStrip)
 
 def main():
     try:
-        # maxDisp = calibrate_slide() - 200
-        maxDisp = 10000
+        maxDisp = calibrate_slide() - 250
         tracks = process_tracks(maxDisp)
 
         LStrip.start()
+        lcd_display = i2c_lcd_driver.lcd()
+        lcd_diplay.lcd_clear()
 
-        for track in tracks:
-            for step in track:
+        shuffle(tracks)
+
+        for t in tracks:
+            for i, step in enumerate(t[1]):
                 print(step)
+                lcd_display.lcd_display_string("Currently running: {}".format(t[0]))
+                lcd_display.lcd_display_string("Progress: {}/{}".format(i, track.shape[0]), 4)
 
                 MLin_done = False
                 MRot_done = False
@@ -170,6 +184,9 @@ def main():
 
                 MRot.join()
                 MLin.join()
+
+            lcd_display.lcd_display_string("--Erasing Drawing!--"))
+            
 
     except KeyboardInterrupt:
         stop_program()
