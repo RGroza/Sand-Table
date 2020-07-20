@@ -167,6 +167,7 @@ def main():
         files = get_files()
         shuffle(files)
 
+        lcd_display.lcd_clear()
         for f in files:
             track = read_track(f)
             for i, step in enumerate(track):
