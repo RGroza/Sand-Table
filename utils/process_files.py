@@ -5,16 +5,20 @@ from os.path import isfile, join
 
 
 microstep_size = 4
+max_disp = 7300
+
+pending_folder = "pending/"
+processed_folder = "processed/"
 
 
-def get_files(folder):
+def get_files(folder=processed_folder):
     onlyfiles = [f for f in listdir(folder) if isfile(join(folder, f))]
     print("Tracks found: " + str(onlyfiles).replace('[', '').replace(']', ''))
 
     return onlyfiles
 
 
-def get_coors(max_disp, filename, folder):
+def get_coors(filename, folder):
     with open(folder + filename, "r") as f:
         content = f.readlines()
 
@@ -22,10 +26,11 @@ def get_coors(max_disp, filename, folder):
 
     coors = np.array([0, 0])
     for c in lines:
-        theta = float(c[:c.find(" ")])
-        r = float(c[c.find(" ")+1:])
+        c = c.split(" ")
+        theta = float(c[0])
+        r = float(c[1])
 
-        if (theta != 0):
+        if (theta != 0 or r != 0):
             theta = int(microstep_size * 3200 * theta / 6.28318531)
             r = int(max_disp * r)
             coors = np.vstack((coors, [theta, r]))
@@ -36,8 +41,8 @@ def get_coors(max_disp, filename, folder):
     return coors
 
 
-def get_steps(max_disp, filename, folder):
-    coors = get_coors(max_disp, filename, folder)
+def get_steps(filename, folder):
+    coors = get_coors(filename, folder)
 
     return coors_to_steps(coors)
 
@@ -54,9 +59,9 @@ def add_delays(steps):
     for s in steps:
         if abs(s[0]) > abs(s[1]):
             Rot_delay = min_delay
-            Lin_delay = round(abs(s[0]) * min_delay / abs(s[1]), 6) if s[1] != 0 else None
+            Lin_delay = round(abs(s[0]) * min_delay / abs(s[1]), 6) if s[1] != 0 else -1
         elif abs(s[1]) > abs(s[0]):
-            Rot_delay = round(abs(s[1]) * min_delay / abs(s[0]), 6) if s[0] != 0 else None
+            Rot_delay = round(abs(s[1]) * min_delay / abs(s[0]), 6) if s[0] != 0 else -1
             Lin_delay = min_delay
         else:
             Rot_delay = min_delay
@@ -70,22 +75,50 @@ def add_delays(steps):
     return steps_with_delays
 
 
-def process_tracks(max_disp, folder="tracks/", debug=False):
-    files = get_files(folder)
-    tracks = []
+def process_new_files(dir=""):
+    print("----- Pending files -----")
+    pending_files = set(get_files(dir + pending_folder))
+    print("----- Processed files -----")
+    processed_files = set(get_files(dir + processed_folder))
+    new_files = list(pending_files - processed_files)
+    print("----- New files -----\nTracks found: " + str(new_files).replace('[', '').replace(']', ''))
 
-    for f in files:
-        steps = get_steps(max_disp, f, folder)
-        steps_with_delays = add_delays(steps)
+    if len(new_files) > 0:
+        tracks = {}
 
-        if debug:
-            print(f + " steps:\n{}".format((steps[:29])))
-            print(f + " steps_with_delays:\n{}".format((steps_with_delays[:29])))
+        for f in new_files:
+            steps_with_delays = add_delays(get_steps(f, dir + pending_folder))
+            tracks.update({f: steps_with_delays})
 
-        tracks.append((f, steps_with_delays))
+        write_tracks(tracks, dir=dir)
 
-    return tracks
+
+def write_tracks(tracks, dir=""):
+    for name in tracks:
+        current_file = open(dir + processed_folder + name, "w+")
+        for line in tracks[name]:
+            current_file.write("{} {} {} {}\n".format(int(line[0]), int(line[1]), line[2], line[3]))
+        current_file.close()
+
+    print("\nFiles processed!\n")
+
+
+def read_track(filename, dir=""):
+    with open(dir + processed_folder + filename, "r") as f:
+        content = f.readlines()
+
+    lines = [line.rstrip('\n') for line in content]
+
+    coors = np.array([0, 0, 0, 0])
+    for c in lines:
+        step_coor = c.split(" ")
+        step_coor[0:1] = list(map(int, list(map(float, step_coor[0:1]))))
+        step_coor[2:3] = list(map(float, step_coor[2:3]))
+
+        coors = np.vstack((coors, step_coor))
+
+    return coors[1:]
 
 
 if __name__ == '__main__':
-    process_tracks(50000, folder="../tracks/", debug=True)
+    process_new_files(dir="../")
