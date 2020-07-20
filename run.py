@@ -8,8 +8,8 @@ from random import shuffle
 from rpi_ws281x import PixelStrip, Color
 from led_strip import *
 
-from utils.process_files import process_files
-from utils.i2c_lcd_driver import i2c_lcd_driver
+from utils.process_files import get_files, process_new_files, read_track
+from utils.i2c_lcd_driver import *
 
 MRot_done = False
 MLin_done = False
@@ -156,14 +156,16 @@ def main():
         calibrate_slide()
 
         LStrip.start()
-        lcd_display = i2c_lcd_driver.lcd()
+        lcd_display = lcd()
         lcd_display.lcd_clear()
 
-        files = process_files.get_files()
+        process_new_files()
+
+        files = get_files()
         shuffle(files)
 
         for f in files:
-            track = process_files.read_file(f)
+            track = read_track(f)
             for i, step in enumerate(track):
                 print(step)
                 lcd_display.lcd_display_string("Currently running: {}".format(f))
