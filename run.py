@@ -153,12 +153,15 @@ LStrip = threading.Thread(target=run_LedStrip)
 
 def main():
     try:
-        calibrate_slide()
-
         LStrip.start()
         lcd_display = lcd()
         lcd_display.lcd_clear()
 
+        lcd_display.lcd_display_string(" Calibrating slide! ", 2)
+        calibrate_slide()
+        lcd_display.lcd_clear()
+
+        lcd_display.lcd_display_string("        ....        ", 2)
         process_new_files()
 
         files = get_files()
@@ -168,7 +171,7 @@ def main():
             track = read_track(f)
             for i, step in enumerate(track):
                 print(step)
-                lcd_display.lcd_display_string("Currently running: {}".format(f))
+                lcd_display.lcd_display_string("Currently running: {}".format(f), 1)
                 lcd_display.lcd_display_string("Progress: {}/{}".format(i, track.shape[0]), 4)
 
                 MLin_done = False
@@ -188,7 +191,7 @@ def main():
                 MRot.join()
                 MLin.join()
 
-            lcd_display.lcd_display_string("--Erasing Drawing!--")
+            lcd_display.lcd_display_string("  Erasing Drawing!  ", 2)
 
     except KeyboardInterrupt:
         stop_program()
