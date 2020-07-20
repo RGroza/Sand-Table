@@ -172,7 +172,8 @@ def main():
             track = read_track(f)
             for i, step in enumerate(track):
                 print(step)
-                lcd_display.lcd_display_string("Currently running: {}".format(f), 1)
+                lcd_display.lcd_display_string("Currently running:", 1)
+                lcd_display.lcd_display_string(f, 2)
                 lcd_display.lcd_display_string("Progress: {}/{}".format(i, track.shape[0]), 4)
 
                 MLin_done = False
