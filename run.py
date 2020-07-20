@@ -174,7 +174,7 @@ def main():
                 print(step)
                 lcd_display.lcd_display_string("Currently running:", 1)
                 lcd_display.lcd_display_string(f, 2)
-                lcd_display.lcd_display_string("Progress: {}/{}".format(i, track.shape[0]), 4)
+                lcd_display.lcd_display_string("Progress: {}/{}".format(i+1, track.shape[0]), 4)
 
                 MLin_done = False
                 MRot_done = False
