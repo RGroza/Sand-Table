@@ -112,8 +112,10 @@ def read_track(filename, dir=""):
     coors = np.array([0, 0, 0, 0])
     for c in lines:
         step_coor = c.split(" ")
-        step_coor[0:1] = list(map(int, list(map(float, step_coor[0:1]))))
-        step_coor[2:3] = list(map(float, step_coor[2:3]))
+        step_coor[0] = int(float(step_coor[0]))
+        step_coor[1] = int(float(step_coor[1]))
+        step_coor[2] = float(step_coor[2])
+        step_coor[3] = float(step_coor[3])
 
         coors = np.vstack((coors, step_coor))
 
@@ -122,3 +124,4 @@ def read_track(filename, dir=""):
 
 if __name__ == '__main__':
     process_new_files(dir="../")
+    # print("\n{}".format(read_track("SwoopyRadiance.txt", dir="../")))
