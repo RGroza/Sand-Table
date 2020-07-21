@@ -134,6 +134,7 @@ def stop_program():
     LStrip.join()
 
     GPIO.cleanup()
+    lcd_display.lcd_display_string("  Program stopped!  ")
     print("Exiting...")
     exit()
 
@@ -154,6 +155,7 @@ def check_collision():
 
 # Create LStrip threads
 LStrip = threading.Thread(target=run_LedStrip)
+lcd_display = lcd()
 
 def main():
     try:
@@ -161,7 +163,6 @@ def main():
         GPIO.output(led_relay, GPIO.LOW)
 
         LStrip.start()
-        lcd_display = lcd()
         lcd_display.lcd_clear()
 
         lcd_display.lcd_display_string(" Calibrating slide! ", 2)
