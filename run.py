@@ -291,10 +291,12 @@ def main():
         lcd_display.lcd_display_string("Calibrating slide!", 2, 1)
         max_disp = calibrate_slide()
         lcd_display.lcd_clear()
+        print("1")
 
         first_file = True
 
         for f in files:
+            print("2")
             if switches.stop_program:
                 stop_program(shutdown=True)
 
@@ -318,15 +320,18 @@ def main():
 
                 switches.collision_detected = False
 
+            print("3")
             lcd_display.lcd_clear()
             lcd_display.lcd_display_string("Reading file....", 2)
             lcd_display.lcd_display_string(f, 3)
             track = read_track(f, Dir="/home/pi/Sand-Table/")
             lcd_display.lcd_clear()
+            print("4")
 
             lcd_display.lcd_display_string("Currently running:", 1)
             lcd_display.lcd_display_string(f, 2)
             lcd_display.lcd_display_string("Progress: ", 4)
+            print("5")
 
             for i, step in enumerate(track):
                 print(step)
