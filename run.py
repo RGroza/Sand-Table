@@ -319,8 +319,10 @@ def main():
                 switches.collision_detected = False
 
             lcd_display.lcd_clear()
-            lcd_display.lcd_display_string("Reading file....", 2, 2)
+            lcd_display.lcd_display_string("Reading file....", 2)
+            lcd_display.lcd_display_string(f, 3)
             track = read_track(f, Dir="/home/pi/Sand-Table/")
+            lcd_display.lcd_clear()
 
             lcd_display.lcd_display_string("Currently running:", 1)
             lcd_display.lcd_display_string(f, 2)
