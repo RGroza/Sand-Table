@@ -11,7 +11,7 @@ from led_strip import *
 from utils.process_files import get_files, process_new_files, read_track, get_max_disp
 from utils.i2c_lcd_driver import *
 
-MRot_done = False
+
 MLin_done = False
 
 # Motor driver object init
@@ -74,7 +74,6 @@ def run_MRot(steps, delay, debug=False):
             M_Rot.turn_steps(Dir='backward', steps=abs(steps), stepdelay=delay)
 
     M_Rot.stop()
-    MRot_done = True
 
     if debug:
         print("M_Rot done!")
@@ -86,7 +85,6 @@ def run_MRot_until(Dir, delay, debug=False):
             M_Rot.turn_steps(Dir=Dir, steps=1, stepdelay=delay)
 
     M_Rot.stop()
-    MRot_done = True
 
     if debug:
         print("M_Rot done!")
@@ -198,6 +196,13 @@ def check_collision():
         stop_motors()
 
 
+def update_LCD(filename, step, track_size):
+    lcd_display.lcd_clear()
+    lcd_display.lcd_display_string("Currently running:", 1)
+    lcd_display.lcd_display_string(filename, 2)
+    lcd_display.lcd_display_string("Progress: {}/{}".format(step, track_size), 4)
+
+
 # def check_button():
 #     if GPIO.input(exit_button) == 0
 
@@ -245,27 +250,25 @@ def main():
 
             for i, step in enumerate(track):
                 print(step)
-                lcd_display.lcd_clear()
-                lcd_display.lcd_display_string("Currently running:", 1)
-                lcd_display.lcd_display_string(f, 2)
-                lcd_display.lcd_display_string("Progress: {}/{}".format(i+1, track.shape[0]), 4)
 
                 MLin_done = False
-                MRot_done = False
 
                 # Create motor threads
                 MRot = threading.Thread(target=run_MRot, args=(step[0], step[2],))
                 MLin = threading.Thread(target=run_MLin, args=(step[1], step[3],))
+                LCD = threading.Thread(target=update_LCD, args=(f, i+1, track.shape[0],))
 
                 print("...")
                 MRot.start()
                 MLin.start()
+                LCD.start()
 
-                while MRot_done or MLin_done:
+                while not MLin_done:
                     check_collision()
 
                 MRot.join()
                 MLin.join()
+                LCD.join()
 
             first_file = False
 

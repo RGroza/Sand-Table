@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
+
 MotorDir = [
     'forward',
     'backward',
@@ -10,6 +11,9 @@ ControlMode = [
     'hardware',
     'software',
 ]
+
+GPIO.setmode(GPIO.BCM)
+
 
 class DRV8825():
     def __init__(self, dir_pin, step_pin, enable_pin, mode_pins):
