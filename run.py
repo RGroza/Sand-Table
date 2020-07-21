@@ -137,6 +137,7 @@ def calibrate_slide():
 
 
 def erase_out_to_in():
+    sleep(1)
     M_Lin.turn_until_switch(Dir='forward', limit_switch=outer_switch, stepdelay=0.0002)
     print("Found edge")
 
@@ -153,6 +154,7 @@ def erase_out_to_in():
 
 
 def erase_in_to_out():
+    sleep(1)
     M_Lin.turn_until_switch(Dir='backward', limit_switch=inner_switch, stepdelay=0.0002)
     print("Found edge")
 
@@ -173,28 +175,36 @@ class SwitchesThread():
     def __init__(self):
         self.running = True
         self.start_time = None
-        self.pressed = False
+        self.switch_pressed = False
+        self.shutdown_pressed = False
         self.collision_detected = False
 
 
     def check_all_switches(self):
         while self.running:
             sleep(.25)
+
             if not self.collision_detected:
                 check_collision(self)
+
             if GPIO.input(exit_button) == 1:
+                if not self.shutdown_pressed:
+                    self.shutdown_pressed = True
+
+            if self.shutdown_pressed and GPIO.input(exit_button) == 0:
                 # Shutdown
                 print("Shutdown pressed!")
+                sleep(.25)
                 stop_program()
 
 
 def check_collision(thread):
     if GPIO.input(inner_switch) == 0 or GPIO.input(outer_switch) == 0:
-        if not thread.pressed:
+        if not thread.switch_pressed:
             thread.start_time = int(round(time.time() * 1000))
-            thread.pressed = True
+            thread.switch_pressed = True
 
-        if thread.pressed and thread.start_time != None:
+        if thread.switch_pressed and thread.start_time != None:
             if int(round(time.time() * 1000)) - thread.start_time > 2000:
                 print("\n---------- Collision Detected! ----------")
                 lcd_display.lcd_clear()
@@ -203,7 +213,7 @@ def check_collision(thread):
                 stop_motors()
                 thread.collision_detected = True
     else:
-        thread.pressed = False
+        thread.switch_pressed = False
 
 
 # Stops the motors and LED strip, and joins the threads
@@ -308,7 +318,7 @@ def main():
                 MLin.join()
 
                 if switches.collision_detected:
-                    switches.pressed = False
+                    switches.switch_pressed = False
                     break
 
                 print("Motors done!")
