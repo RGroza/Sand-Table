@@ -4,6 +4,7 @@ import threading
 import math
 from time import sleep
 from random import shuffle
+from subprocess import call
 
 from rpi_ws281x import PixelStrip, Color
 from led_strip import *
@@ -138,11 +139,12 @@ def calibrate_slide():
 def erase_out_to_in():
     sleep(1)
     M_Lin.turn_until_switch(Dir='forward', limit_switch=outer_switch, stepdelay=0.0002)
+    M_Lin.turn_steps(Dir='backward', steps=outer_to_max, stepdelay=0.0002)
     print("Found edge")
 
     sleep(.5)
     MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.00025,))
-    MLin = threading.Thread(target=run_MLin_until, args=(-max_disp - outer_to_max, 0.01,))
+    MLin = threading.Thread(target=run_MLin_until, args=(-max_disp, 0.01,))
 
     print("Erasing...")
     MRot.start()
@@ -155,11 +157,12 @@ def erase_out_to_in():
 def erase_in_to_out():
     sleep(1)
     M_Lin.turn_until_switch(Dir='backward', limit_switch=inner_switch, stepdelay=0.0002)
+    M_Lin.turn_steps(Dir='forward', steps=center_to_min, stepdelay=0.0002)
     print("Found edge")
 
     sleep(.5)
     MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.00025,))
-    MLin = threading.Thread(target=run_MLin_until, args=(max_disp + center_to_min, 0.01,))
+    MLin = threading.Thread(target=run_MLin_until, args=(max_disp, 0.01,))
 
     print("Erasing...")
     MRot.start()
@@ -177,6 +180,7 @@ class SwitchesThread():
         self.switch_pressed = False
         self.shutdown_pressed = False
         self.collision_detected = False
+        self.stop_program = False
 
 
     def check_all_switches(self):
@@ -193,8 +197,9 @@ class SwitchesThread():
             if self.shutdown_pressed and GPIO.input(exit_button) == 0:
                 # Shutdown
                 print("Shutdown pressed!")
-                sleep(.25)
-                stop_program()
+                self.stop_program = True
+                self.running = False
+                stop_motors()
 
 
 def check_collision(thread):
@@ -216,7 +221,7 @@ def check_collision(thread):
 
 
 # Stops the motors and LED strip, and joins the threads
-def stop_program():
+def stop_program(shutdown=False):
     lcd_display.lcd_clear()
     lcd_display.lcd_display_string("  Program stopped!  ", 2)
 
@@ -227,11 +232,14 @@ def stop_program():
     LStrip.join()
 
     switches_thread.join()
-    switches.running = False
 
     GPIO.cleanup()
-    print("Exiting...")
-    exit()
+
+    if shutdown:
+        call("sudo shutdown -h now", shell=True)
+    else:
+        print("Exiting...")
+        exit()
 
 
 def stop_motors():
@@ -286,10 +294,12 @@ def main():
                 M_Rot.running = True
                 M_Lin.running = True
 
-                if round(track[0][1] / get_max_disp()) > 0:
-                    erase_in_to_out()
-                else:
-                    erase_out_to_in()
+                erase_out_to_in()
+
+                # if round(track[0][1] / get_max_disp()) > 0:
+                #     erase_in_to_out()
+                # else:
+                #     erase_out_to_in()
 
                 switches.collision_detected = False
 
@@ -321,6 +331,9 @@ def main():
                 if switches.collision_detected:
                     switches.switch_pressed = False
                     break
+
+                if switches.stop_program:
+                    stop_program(shutdown=True)
 
                 print("Motors done!")
 
