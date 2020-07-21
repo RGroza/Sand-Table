@@ -29,10 +29,14 @@ strip_thread = LedStripThread()
 # Setup for limit switches
 outer_switch = 5
 inner_switch = 6
+motor_relay = 23
+led_relay = 25
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(outer_switch, GPIO.IN)
 GPIO.setup(inner_switch, GPIO.IN)
+GPIO.setup(motor_relay, GPIO.OUT)
+GPIO.setup(led_relay, GPIO.OUT)
 
 
 # Run through the LED strip routine
@@ -153,6 +157,9 @@ LStrip = threading.Thread(target=run_LedStrip)
 
 def main():
     try:
+        GPIO.output(motor_relay, GPIO.LOW)
+        GPIO.output(led_relay, GPIO.LOW)
+
         LStrip.start()
         lcd_display = lcd()
         lcd_display.lcd_clear()
