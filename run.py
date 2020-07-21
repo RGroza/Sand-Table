@@ -141,7 +141,7 @@ def erase_out_to_in():
     print("Found edge")
 
     sleep(.5)
-    MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.00015,))
+    MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.00025,))
     MLin = threading.Thread(target=run_MLin_until, args=(-max_disp - outer_to_max, 0.01,))
 
     print("Erasing...")
@@ -157,7 +157,7 @@ def erase_in_to_out():
     print("Found edge")
 
     sleep(.5)
-    MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.00015,))
+    MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.00025,))
     MLin = threading.Thread(target=run_MLin_until, args=(max_disp + center_to_min, 0.01,))
 
     print("Erasing...")
