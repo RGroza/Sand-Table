@@ -175,6 +175,7 @@ class SwitchesThread():
 
     def check_all_switches(self):
         while self.running:
+            sleep(.5)
             check_collision(self)
             if GPIO.input(exit_button) == 1:
                 # Shutdown
