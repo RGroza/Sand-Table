@@ -279,9 +279,9 @@ def main():
 
         lcd_display.lcd_clear()
         lcd_display.lcd_display_string("....", 2, 8)
-        process_new_files()
+        process_new_files(Dir="/home/pi/Sand-Table/")
 
-        files = get_files()
+        files = get_files(Dir="/home/pi/Sand-Table/")
         shuffle(files)
 
         switches_thread.start()
@@ -317,7 +317,7 @@ def main():
 
                 switches.collision_detected = False
 
-            track = read_track(f)
+            track = read_track(f, Dir="/home/pi/Sand-Table/")
 
             lcd_display.lcd_display_string("Currently running:", 1)
             lcd_display.lcd_display_string(f, 2)

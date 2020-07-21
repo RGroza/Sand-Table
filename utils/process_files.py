@@ -15,8 +15,8 @@ def get_max_disp():
     return max_disp
 
 
-def get_files(folder=processed_folder):
-    onlyfiles = [f for f in listdir(folder) if isfile(join(folder, f))]
+def get_files(Dir="", folder=processed_folder):
+    onlyfiles = [f for f in listdir(Dir + folder) if isfile(join(folder, f))]
     # print("Tracks found: " + str(onlyfiles).replace('[', '').replace(']', ''))
 
     return onlyfiles
@@ -79,11 +79,11 @@ def add_delays(steps):
     return steps_with_delays
 
 
-def process_new_files(dir=""):
+def process_new_files(Dir=""):
     print("----- Pending files -----")
-    pending_files = set(get_files(dir + pending_folder))
+    pending_files = set(get_files(Dir + pending_folder))
     print("----- Processed files -----")
-    processed_files = set(get_files(dir + processed_folder))
+    processed_files = set(get_files(Dir + processed_folder))
     new_files = list(pending_files - processed_files)
     print("----- New files -----\nTracks found: " + str(new_files).replace('[', '').replace(']', ''))
 
@@ -91,15 +91,15 @@ def process_new_files(dir=""):
         tracks = {}
 
         for f in new_files:
-            steps_with_delays = add_delays(get_steps(f, dir + pending_folder))
+            steps_with_delays = add_delays(get_steps(f, Dir + pending_folder))
             tracks.update({f: steps_with_delays})
 
-        write_tracks(tracks, dir=dir)
+        write_tracks(tracks, Dir=Dir)
 
 
-def write_tracks(tracks, dir=""):
+def write_tracks(tracks, Dir=""):
     for name in tracks:
-        current_file = open(dir + processed_folder + name, "w+")
+        current_file = open(Dir + processed_folder + name, "w+")
         for line in tracks[name]:
             current_file.write("{} {} {} {}\n".format(int(line[0]), int(line[1]), line[2], line[3]))
         current_file.close()
@@ -107,8 +107,8 @@ def write_tracks(tracks, dir=""):
     print("\nFiles processed!\n")
 
 
-def read_track(filename, dir=""):
-    with open(dir + processed_folder + filename, "r") as f:
+def read_track(filename, Dir=""):
+    with open(Dir + processed_folder + filename, "r") as f:
         content = f.readlines()
 
     lines = [line.rstrip('\n') for line in content]
@@ -127,5 +127,5 @@ def read_track(filename, dir=""):
 
 
 if __name__ == '__main__':
-    process_new_files(dir="../")
-    # print("\n{}".format(read_track("SwoopyRadiance.txt", dir="../")))
+    process_new_files(Dir="../")
+    # print("\n{}".format(read_track("SwoopyRadiance.txt", Dir="../")))
