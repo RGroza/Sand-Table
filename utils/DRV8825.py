@@ -16,6 +16,7 @@ GPIO.setmode(GPIO.BCM)
 
 
 class DRV8825():
+
     def __init__(self, dir_pin, step_pin, enable_pin, mode_pins):
         self.dir_pin = dir_pin
         self.step_pin = step_pin

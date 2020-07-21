@@ -29,10 +29,12 @@ outer_switch = 5
 inner_switch = 6
 motor_relay = 23
 led_relay = 25
+exit_button = 26
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(outer_switch, GPIO.IN)
 GPIO.setup(inner_switch, GPIO.IN)
+GPIO.setup(exit_button, GPIO.IN)
 GPIO.setup(motor_relay, GPIO.OUT)
 GPIO.setup(led_relay, GPIO.OUT)
 
@@ -41,26 +43,28 @@ center_to_min = 250
 outer_to_max = 250
 max_disp = 0
 
+collision_detected = False
+
 
 # Run through the LED strip routine
 def run_LedStrip():
     strip.begin()
 
-    if not strip_thread.running: return
-    print('LED Color wipe')
-    strip_thread.colorWipe(strip, Color(255, 0, 0))  # Red wipe
-    strip_thread.colorWipe(strip, Color(0, 255, 0))  # Blue wipe
-    strip_thread.colorWipe(strip, Color(0, 0, 255))  # Green wipe
-    print('LED Theater chase')
-    if not strip_thread.running: return
-    strip_thread.theaterChase(strip, Color(127, 127, 127))  # White theater chase
-    strip_thread.theaterChase(strip, Color(127, 0, 0))  # Red theater chase
-    strip_thread.theaterChase(strip, Color(0, 0, 127))  # Blue theater chase
-    print('LED Rainbow animations')
-    if not strip_thread.running: return
-    strip_thread.rainbow(strip)
-    strip_thread.rainbowCycle(strip)
-    strip_thread.theaterChaseRainbow(strip)
+    while strip_thread.running:
+        print('LED Color wipe')
+        strip_thread.colorWipe(strip, Color(255, 0, 0))  # Red wipe
+        strip_thread.colorWipe(strip, Color(0, 255, 0))  # Blue wipe
+        strip_thread.colorWipe(strip, Color(0, 0, 255))  # Green wipe
+        print('LED Theater chase')
+        if not strip_thread.running: return
+        strip_thread.theaterChase(strip, Color(127, 127, 127))  # White theater chase
+        strip_thread.theaterChase(strip, Color(127, 0, 0))  # Red theater chase
+        strip_thread.theaterChase(strip, Color(0, 0, 127))  # Blue theater chase
+        print('LED Rainbow animations')
+        if not strip_thread.running: return
+        strip_thread.rainbow(strip)
+        strip_thread.rainbowCycle(strip)
+        strip_thread.theaterChaseRainbow(strip)
 
 
 # Functions defined for each motor thread
@@ -162,6 +166,36 @@ def erase_in_to_out():
     MLin.join()
 
 
+class SwitchesThread():
+
+    def __init__(self):
+        self.running = True
+
+
+    def check_all_switches(self):
+        while self.running:
+            check_collision()
+            if GPIO.input(exit_button) == 1:
+                # Shutdown
+                continue
+
+
+def check_collision():
+    if GPIO.input(inner_switch) == 0 or GPIO.input(outer_switch) == 0:
+        pressed = True
+
+        if not pressed:
+            start_time = int(round(time.time() * 1000))
+
+        if int(round(time.time * 1000)) - start_time > 2000:
+            print("\n---------- Collision Detected! ----------")
+            lcd_display.lcd_clear()
+            lcd_display.lcd_display_string("Collision Detected", 2, 1)
+
+            stop_motors()
+            collision_detected = True
+
+
 # Stops the motors and LED strip, and joins the threads
 def stop_program():
     lcd_display.lcd_clear()
@@ -186,18 +220,11 @@ def stop_motors():
     print("\n---------- Motors Stopped! ----------")
 
 
-def check_collision():
-    if GPIO.input(inner_switch) == 0 or GPIO.input(outer_switch) == 0:
-        print("\n---------- Collision Detected! ----------")
-        stop_motors()
+# Switches thread object init
+switches_thread = SwitchesThread()
 
-
-# def check_button():
-#     if GPIO.input(exit_button) == 0
-
-
-# Create Button thread
-# button_thread = threading.Thread(target=check_button)
+# Create switches thread
+switched_thread = threading.Thread(target=switches_thread.check_all_switches)
 
 # Create LStrip thread
 LStrip = threading.Thread(target=run_LedStrip)
@@ -257,11 +284,12 @@ def main():
                 MRot.start()
                 MLin.start()
 
-                # while M_Lin.running:
-                #     check_collision()
-
                 MRot.join()
                 MLin.join()
+
+                if collision_detected:
+                    break
+
                 print("Motors done!")
 
             first_file = False
