@@ -168,6 +168,7 @@ class SwitchesThread():
 
     def __init__(self):
         self.running = True
+        self.start_time = None
         self.pressed = False
         self.collision_detected = False
 
@@ -184,11 +185,11 @@ class SwitchesThread():
 def check_collision(thread):
     if GPIO.input(inner_switch) == 0 or GPIO.input(outer_switch) == 0:
         if not thread.pressed:
-            start_time = int(round(time.time() * 1000))
+            thread.start_time = int(round(time.time() * 1000))
             thread.pressed = True
 
-        if thread.pressed:
-            if int(round(time.time() * 1000)) - start_time > 2000:
+        if thread.pressed and thread.start_time != None:
+            if int(round(time.time() * 1000)) - thread.start_time > 2000:
                 print("\n---------- Collision Detected! ----------")
                 lcd_display.lcd_clear()
                 lcd_display.lcd_display_string("Collision Detected", 2, 1)
@@ -248,8 +249,6 @@ def main():
         max_disp = calibrate_slide()
         lcd_display.lcd_clear()
 
-        switches_thread.start()
-
         lcd_display.lcd_display_string("....", 2, 8)
         process_new_files()
 
@@ -257,6 +256,7 @@ def main():
         shuffle(files)
 
         lcd_display.lcd_clear()
+        switches_thread.start()
 
         first_file = True
 
