@@ -294,78 +294,82 @@ def main():
 
         first_file = True
 
-        if len(files) == 0:
-            lcd_display.lcd_display_string("Files not found!", 2, 2)
-
-        print("1")
-        for f in files:
-            print("2")
-            if switches.stop_program:
+        while not switches.stop_program:
+            if len(files) == 0:
+                lcd_display.lcd_display_string("Files not found!", 2, 2)
+                lcd_display.lcd_display_string("Shutting Down...", 3, 2)
+                sleep(5)
                 stop_program(shutdown=True)
 
-            if not first_file:
+            print("1")
+            for f in files:
+                print("2")
+                if switches.stop_program:
+                    stop_program(shutdown=True)
+
+                if not first_file:
+                    lcd_display.lcd_clear()
+                    lcd_display.lcd_display_string("Erasing Drawing!", 2, 2)
+
+                    switches.collision_detected = True
+                    M_Rot.running = True
+                    M_Lin.running = True
+
+                    erase_out_to_in()
+
+                    if switches.stop_program:
+                        stop_program(shutdown=True)
+
+                    # if round(track[0][1] / get_max_disp()) > 0:
+                    #     erase_in_to_out()
+                    # else:
+                    #     erase_out_to_in()
+
+                    switches.collision_detected = False
+
+                print("3")
+                print("Running: {}".format(f))
                 lcd_display.lcd_clear()
-                lcd_display.lcd_display_string("Erasing Drawing!", 2, 2)
+                lcd_display.lcd_display_string("Reading file....", 2)
+                lcd_display.lcd_display_string(f, 3)
+                track = read_track(f, Dir="/home/pi/Sand-Table/")
+                lcd_display.lcd_clear()
 
-                switches.collision_detected = True
-                M_Rot.running = True
-                M_Lin.running = True
+                print("4")
+                lcd_display.lcd_display_string("Currently running:", 1)
+                lcd_display.lcd_display_string(f, 2)
+                lcd_display.lcd_display_string("Progress: ", 4)
 
-                erase_out_to_in()
+                print("5")
+                for i, step in enumerate(track):
+                    print(step)
 
-                if switches.stop_program:
-                    stop_program(shutdown=True)
+                    lcd_display.lcd_display_string("          ", 4, 10)
+                    lcd_display.lcd_display_string("{}/{}".format(i+1, track.shape[0]), 4, 10)
 
-                # if round(track[0][1] / get_max_disp()) > 0:
-                #     erase_in_to_out()
-                # else:
-                #     erase_out_to_in()
+                    # Create motor threads
+                    MRot = threading.Thread(target=run_MRot, args=(step[0], step[2],))
+                    MLin = threading.Thread(target=run_MLin, args=(step[1], step[3],))
 
-                switches.collision_detected = False
+                    print("...")
+                    M_Rot.running = True
+                    M_Lin.running = True
+                    MRot.start()
+                    MLin.start()
 
-            print("3")
-            print("Running: {}".format(f))
-            lcd_display.lcd_clear()
-            lcd_display.lcd_display_string("Reading file....", 2)
-            lcd_display.lcd_display_string(f, 3)
-            track = read_track(f, Dir="/home/pi/Sand-Table/")
-            lcd_display.lcd_clear()
+                    MRot.join()
+                    MLin.join()
 
-            print("4")
-            lcd_display.lcd_display_string("Currently running:", 1)
-            lcd_display.lcd_display_string(f, 2)
-            lcd_display.lcd_display_string("Progress: ", 4)
+                    if switches.collision_detected:
+                        switches.switch_pressed = False
+                        break
 
-            print("5")
-            for i, step in enumerate(track):
-                print(step)
+                    if switches.stop_program:
+                        stop_program(shutdown=True)
 
-                lcd_display.lcd_display_string("          ", 4, 10)
-                lcd_display.lcd_display_string("{}/{}".format(i+1, track.shape[0]), 4, 10)
+                    print("Motors done!")
 
-                # Create motor threads
-                MRot = threading.Thread(target=run_MRot, args=(step[0], step[2],))
-                MLin = threading.Thread(target=run_MLin, args=(step[1], step[3],))
-
-                print("...")
-                M_Rot.running = True
-                M_Lin.running = True
-                MRot.start()
-                MLin.start()
-
-                MRot.join()
-                MLin.join()
-
-                if switches.collision_detected:
-                    switches.switch_pressed = False
-                    break
-
-                if switches.stop_program:
-                    stop_program(shutdown=True)
-
-                print("Motors done!")
-
-            first_file = False
+                first_file = False
 
     except KeyboardInterrupt:
         stop_program()
