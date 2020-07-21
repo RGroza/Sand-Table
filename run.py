@@ -226,9 +226,8 @@ def stop_program():
     strip_thread.colorWipe(strip, Color(0, 0, 0))
     LStrip.join()
 
-    switches.running = False
-    sleep(1)
     switches_thread.join()
+    switches.running = False
 
     GPIO.cleanup()
     print("Exiting...")
