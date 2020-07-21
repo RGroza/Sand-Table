@@ -66,7 +66,7 @@ def run_LedStrip():
 
 
 # Functions defined for each motor thread
-def run_MRot(steps, delay, debug=False):
+def run_MRot(steps, delay):
     if steps != 0 and delay >= 0:
         if steps > 0:
             M_Rot.turn_steps(Dir='forward', steps=abs(steps), stepdelay=delay)
@@ -75,22 +75,20 @@ def run_MRot(steps, delay, debug=False):
 
     M_Rot.stop()
 
-    if debug:
-        print("M_Rot done!")
+    print("M_Rot done!")
 
 
-def run_MRot_until(Dir, delay, debug=False):
+def run_MRot_until(Dir, delay):
     if delay >= 0:
         while M_Rot.running:
             M_Rot.turn_steps(Dir=Dir, steps=1, stepdelay=delay)
 
     M_Rot.stop()
 
-    if debug:
-        print("M_Rot done!")
+    # print("M_Rot done!")
 
 
-def run_MLin(steps, delay, debug=False):
+def run_MLin(steps, delay):
     if steps != 0 and delay >= 0:
         if steps > 0:
             M_Lin.turn_steps(Dir='forward', steps=abs(steps), stepdelay=delay)
@@ -100,12 +98,11 @@ def run_MLin(steps, delay, debug=False):
     M_Lin.stop()
     MLin_done = True
 
-    if debug:
-        print("M_Lin done!")
+    print("M_Lin done!")
 
 
-def run_MLin_until(steps, delay, debug=False):
-    run_MLin(steps, delay, debug=debug)
+def run_MLin_until(steps, delay):
+    run_MLin(steps, delay)
     M_Rot.running = True
 
 
