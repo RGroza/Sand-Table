@@ -41,7 +41,6 @@ GPIO.setup(led_relay, GPIO.OUT)
 # Slide thresholds
 center_to_min = 250
 outer_to_max = 250
-max_disp = 0
 
 
 # Run through the LED strip routine
@@ -228,6 +227,7 @@ def stop_program():
     LStrip.join()
 
     switches.running = False
+    sleep(1)
     switches_thread.join()
 
     GPIO.cleanup()
@@ -254,6 +254,8 @@ LStrip = threading.Thread(target=run_LedStrip)
 lcd_display = lcd()
 
 def main():
+    global max_disp
+
     try:
         GPIO.output(motor_relay, GPIO.LOW)
         GPIO.output(led_relay, GPIO.LOW)
