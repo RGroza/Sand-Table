@@ -171,7 +171,7 @@ def erase_in_to_out():
 # Stops the motors and LED strip, and joins the threads
 def stop_program():
     lcd_display.lcd_clear()
-    lcd_display.lcd_display_string("  Program stopped!  ")
+    lcd_display.lcd_display_string("  Program stopped!  ", 2)
 
     stop_motors()
 
