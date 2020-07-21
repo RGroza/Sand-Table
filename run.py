@@ -248,6 +248,7 @@ def stop_program(shutdown=False):
         lcd_display.lcd_display_string("Wait at least 10 sec", 2)
         lcd_display.lcd_display_string("before restarting!", 3, 1)
         sleep(3)
+        lcd_display.lcd_clear()
 
         call("sudo shutdown -h now", shell=True)
     else:
