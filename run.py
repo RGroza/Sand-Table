@@ -177,6 +177,7 @@ class SwitchesThread():
             check_collision(self)
             if GPIO.input(exit_button) == 1:
                 # Shutdown
+                print("Shutdown pressed!")
                 continue
 
 
@@ -186,13 +187,14 @@ def check_collision(thread):
             start_time = int(round(time.time() * 1000))
             thread.pressed = True
 
-        if thread.pressed and int(round(time.time() * 1000)) - start_time > 2000:
-            print("\n---------- Collision Detected! ----------")
-            lcd_display.lcd_clear()
-            lcd_display.lcd_display_string("Collision Detected", 2, 1)
+        if thread.pressed:
+            if int(round(time.time() * 1000)) - start_time > 2000:
+                print("\n---------- Collision Detected! ----------")
+                lcd_display.lcd_clear()
+                lcd_display.lcd_display_string("Collision Detected", 2, 1)
 
-            stop_motors()
-            thread.collision_detected = True
+                stop_motors()
+                thread.collision_detected = True
     else:
         thread.pressed = False
 
