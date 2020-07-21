@@ -257,8 +257,8 @@ def main():
                 MRot.start()
                 MLin.start()
 
-                while M_Lin.running:
-                    check_collision()
+                # while M_Lin.running:
+                #     check_collision()
 
                 MRot.join()
                 MLin.join()
