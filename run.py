@@ -241,9 +241,9 @@ def main():
                 else:
                     erase_out_to_in()
 
-                lcd_display.lcd_display_string("Currently running:", 1)
-                lcd_display.lcd_display_string(f, 2)
-                lcd_display.lcd_display_string("Progress: ", 4)
+            lcd_display.lcd_display_string("Currently running:", 1)
+            lcd_display.lcd_display_string(f, 2)
+            lcd_display.lcd_display_string("Progress: ", 4)
 
             for i, step in enumerate(track):
                 print(step)
