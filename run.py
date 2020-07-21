@@ -198,6 +198,7 @@ class SwitchesThread():
                 # Shutdown
                 print("Shutdown pressed!")
                 self.stop_program = True
+                self.running = False
                 stop_motors()
 
 
@@ -234,11 +235,11 @@ def stop_program(shutdown=False):
     strip_thread.colorWipe(strip, Color(0, 0, 0))
     LStrip.join()
 
+    switches_thread.join()
+
     if shutdown:
         sleep(2)
 
-        switches.running = False
-        switches_thread.join()
         lcd_display.lcd_clear()
         GPIO.cleanup()
 
