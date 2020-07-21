@@ -235,6 +235,7 @@ def stop_program(shutdown=False):
     strip_thread.colorWipe(strip, Color(0, 0, 0))
     LStrip.join()
 
+    switches.running = False
     switches_thread.join()
 
     if shutdown:
