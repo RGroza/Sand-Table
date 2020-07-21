@@ -186,7 +186,7 @@ def check_collision(thread):
         if not pressed:
             start_time = int(round(time.time() * 1000))
 
-        if int(round(time.time * 1000)) - start_time > 2000:
+        if int(round(time.time() * 1000)) - start_time > 2000:
             print("\n---------- Collision Detected! ----------")
             lcd_display.lcd_clear()
             lcd_display.lcd_display_string("Collision Detected", 2, 1)
