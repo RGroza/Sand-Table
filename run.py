@@ -284,6 +284,7 @@ def main():
 
         files = get_files(Dir="/home/pi/Sand-Table/")
         shuffle(files)
+        print(str(files))
 
         switches_thread.start()
 
@@ -291,7 +292,6 @@ def main():
         lcd_display.lcd_display_string("Calibrating slide!", 2, 1)
         max_disp = calibrate_slide()
         lcd_display.lcd_clear()
-        print("1")
 
         first_file = True
 
