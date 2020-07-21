@@ -284,7 +284,6 @@ def main():
 
         files = get_files(Dir="/home/pi/Sand-Table/")
         shuffle(files)
-        print(str(files))
 
         switches_thread.start()
 
@@ -295,6 +294,10 @@ def main():
 
         first_file = True
 
+        if len(files) == 0:
+            lcd_display.lcd_display_string("Files not found!", 2, 2)
+
+        print("1")
         for f in files:
             print("2")
             if switches.stop_program:
@@ -326,13 +329,13 @@ def main():
             lcd_display.lcd_display_string(f, 3)
             track = read_track(f, Dir="/home/pi/Sand-Table/")
             lcd_display.lcd_clear()
-            print("4")
 
+            print("4")
             lcd_display.lcd_display_string("Currently running:", 1)
             lcd_display.lcd_display_string(f, 2)
             lcd_display.lcd_display_string("Progress: ", 4)
-            print("5")
 
+            print("5")
             for i, step in enumerate(track):
                 print(step)
 
