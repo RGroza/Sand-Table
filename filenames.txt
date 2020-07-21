@@ -1,0 +1,11 @@
+BinarySupport.txt
+BurstyBezier.txt
+NestedBubbles.txt
+OrderlyTransition.txt
+Petalar.txt
+PolarValentine.txt
+SineVsBezier.txt
+SineVsBezier2.txt
+SpiralBezier.txt
+SpiralGyrations.txt
+SwoopyRadiance.txt

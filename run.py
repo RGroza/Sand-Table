@@ -282,7 +282,10 @@ def main():
         lcd_display.lcd_display_string("....", 2, 8)
         process_new_files(Dir="/home/pi/Sand-Table/")
 
-        files = get_files(Dir="/home/pi/Sand-Table/")
+        # files = get_files(Dir="/home/pi/Sand-Table/")
+        with open("/home/pi/Sand-Table/filenames.txt", "r") as f:
+            content = f.readlines()
+        files = [line.rstrip('\n') for line in content]
         shuffle(files)
 
         switches_thread.start()
@@ -292,14 +295,15 @@ def main():
         max_disp = calibrate_slide()
         lcd_display.lcd_clear()
 
+        if len(files) == 0:
+            lcd_display.lcd_display_string("Files not found!", 2, 2)
+            # lcd_display.lcd_display_string("Shutting Down...", 3, 2)
+            # sleep(5)
+            # stop_program(shutdown=True)
+
         first_file = True
 
         while not switches.stop_program:
-            if len(files) == 0:
-                lcd_display.lcd_display_string("Files not found!", 2, 2)
-                lcd_display.lcd_display_string("Shutting Down...", 3, 2)
-                sleep(5)
-                stop_program(shutdown=True)
 
             print("1")
             for f in files:
