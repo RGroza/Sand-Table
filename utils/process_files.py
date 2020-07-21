@@ -81,9 +81,9 @@ def add_delays(steps):
 
 def process_new_files(Dir=""):
     print("----- Pending files -----")
-    pending_files = set(get_files(Dir + pending_folder))
+    pending_files = set(get_files(Dir=Dir, folder=pending_folder))
     print("----- Processed files -----")
-    processed_files = set(get_files(Dir + processed_folder))
+    processed_files = set(get_files(Dir=Dir, folder=processed_folder))
     new_files = list(pending_files - processed_files)
     print("----- New files -----\nTracks found: " + str(new_files).replace('[', '').replace(']', ''))
 
