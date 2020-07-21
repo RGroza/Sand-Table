@@ -307,7 +307,7 @@ def main():
 
             for f in files:
                 if switches.stop_program:
-                    stop_program(shutdown=True)
+                    break
 
                 if not first_file:
                     lcd_display.lcd_clear()
@@ -320,7 +320,7 @@ def main():
                     erase_out_to_in()
 
                     if switches.stop_program:
-                        stop_program(shutdown=True)
+                        break
 
                     # if round(track[0][1] / get_max_disp()) > 0:
                     #     erase_in_to_out()
@@ -364,7 +364,7 @@ def main():
                         break
 
                     if switches.stop_program:
-                        stop_program(shutdown=True)
+                        break
 
                     print("Motors done!")
 
