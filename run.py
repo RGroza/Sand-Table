@@ -248,8 +248,8 @@ def main():
             for i, step in enumerate(track):
                 print(step)
 
-                lcd_display.lcd_display_string("          ".format(step, track_size), 4, 10)
-                lcd_display.lcd_display_string("{}/{}".format(step, track_size), 4, 10)
+                lcd_display.lcd_display_string("          ".format(step, track.shape[0]), 4, 10)
+                lcd_display.lcd_display_string("{}/{}".format(step, track.shape[0]), 4, 10)
 
                 MLin_done = False
 
