@@ -294,6 +294,9 @@ def main():
         first_file = True
 
         for f in files:
+            if switches.stop_program:
+                stop_program(shutdown=True)
+
             if not first_file:
                 lcd_display.lcd_clear()
                 lcd_display.lcd_display_string("Erasing Drawing!", 2, 2)
@@ -303,6 +306,9 @@ def main():
                 M_Lin.running = True
 
                 erase_out_to_in()
+
+                if switches.stop_program:
+                    stop_program(shutdown=True)
 
                 # if round(track[0][1] / get_max_disp()) > 0:
                 #     erase_in_to_out()
