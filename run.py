@@ -305,9 +305,7 @@ def main():
 
         while not switches.stop_program:
 
-            print("1")
             for f in files:
-                print("2")
                 if switches.stop_program:
                     stop_program(shutdown=True)
 
@@ -331,7 +329,6 @@ def main():
 
                     switches.collision_detected = False
 
-                print("3")
                 print("Running: {}".format(f))
                 lcd_display.lcd_clear()
                 lcd_display.lcd_display_string("Reading file....", 2)
@@ -339,12 +336,10 @@ def main():
                 track = read_track(f, Dir="/home/pi/Sand-Table/")
                 lcd_display.lcd_clear()
 
-                print("4")
                 lcd_display.lcd_display_string("Currently running:", 1)
                 lcd_display.lcd_display_string(f, 2)
                 lcd_display.lcd_display_string("Progress: ", 4)
 
-                print("5")
                 for i, step in enumerate(track):
                     print(step)
 
@@ -374,6 +369,9 @@ def main():
                     print("Motors done!")
 
                 first_file = False
+
+        if switches.stop_program:
+            stop_program(shutdown=True)
 
     except KeyboardInterrupt:
         stop_program()
