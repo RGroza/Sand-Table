@@ -31,6 +31,7 @@ inner_switch = 6
 motor_relay = 23
 led_relay = 25
 exit_button = 26
+exit_button_led = 14
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(outer_switch, GPIO.IN)
@@ -38,6 +39,7 @@ GPIO.setup(inner_switch, GPIO.IN)
 GPIO.setup(exit_button, GPIO.IN)
 GPIO.setup(motor_relay, GPIO.OUT)
 GPIO.setup(led_relay, GPIO.OUT)
+GPIO.setup(exit_button_led, GPIO.OUT)
 
 # Slide thresholds
 center_to_min = 250
@@ -198,8 +200,14 @@ class SwitchesThread():
                 # Shutdown
                 print("Shutdown pressed!")
                 self.stop_program = True
-                self.running = False
                 stop_motors()
+
+                while self.running:
+                    GPIO.output(exit_button_led, GPIO.LOW)
+                    sleep(.5)
+                    GPIO.output(exit_button_led, GPIO.HIGH)
+
+                GPIO.output(exit_button_led, GPIO.LOW)
 
 
 def check_collision(thread):
@@ -222,8 +230,12 @@ def check_collision(thread):
 
 # Stops the motors and LED strip, and joins the threads
 def stop_program(shutdown=False):
-    lcd_display.lcd_clear()
-    lcd_display.lcd_display_string("Program stopped!", 2, 2)
+    if shutdown:
+        lcd_display.lcd_clear()
+        lcd_display.lcd_display_string("Shutting down...", 2, 2)
+    else:
+        lcd_display.lcd_clear()
+        lcd_display.lcd_display_string("Program stopped!", 2, 2)
 
     stop_motors()
 
@@ -231,17 +243,17 @@ def stop_program(shutdown=False):
     strip_thread.colorWipe(strip, Color(0, 0, 0))
     LStrip.join()
 
-    switches_thread.join()
-
-    GPIO.cleanup()
-
     if shutdown:
+        sleep(2)
+
+        switches.running = False
+        switches_thread.join()
         lcd_display.lcd_clear()
-        lcd_display.lcd_display_string("Shutting down...", 2, 2)
-        sleep(1)
-        lcd_display.lcd_clear()
+        GPIO.cleanup()
+
         call("sudo shutdown -h now", shell=True)
     else:
+        GPIO.cleanup()
         print("Exiting...")
         exit()
 
@@ -270,6 +282,7 @@ def main():
     try:
         GPIO.output(motor_relay, GPIO.LOW)
         GPIO.output(led_relay, GPIO.LOW)
+        GPIO.output(exit_button_led, GPIO.HIGH)
 
         LStrip.start()
         lcd_display.lcd_clear()
