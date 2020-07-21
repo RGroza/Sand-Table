@@ -31,7 +31,6 @@ inner_switch = 6
 motor_relay = 23
 led_relay = 25
 exit_button = 26
-exit_button_led = 14
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(outer_switch, GPIO.IN)
@@ -39,7 +38,6 @@ GPIO.setup(inner_switch, GPIO.IN)
 GPIO.setup(exit_button, GPIO.IN)
 GPIO.setup(motor_relay, GPIO.OUT)
 GPIO.setup(led_relay, GPIO.OUT)
-GPIO.setup(exit_button_led, GPIO.OUT)
 
 # Slide thresholds
 center_to_min = 250
@@ -202,13 +200,6 @@ class SwitchesThread():
                 self.stop_program = True
                 stop_motors()
 
-                while self.running:
-                    GPIO.output(exit_button_led, GPIO.LOW)
-                    sleep(.5)
-                    GPIO.output(exit_button_led, GPIO.HIGH)
-
-                GPIO.output(exit_button_led, GPIO.LOW)
-
 
 def check_collision(thread):
     if GPIO.input(inner_switch) == 0 or GPIO.input(outer_switch) == 0:
@@ -282,23 +273,22 @@ def main():
     try:
         GPIO.output(motor_relay, GPIO.LOW)
         GPIO.output(led_relay, GPIO.LOW)
-        GPIO.output(exit_button_led, GPIO.HIGH)
 
         LStrip.start()
-        lcd_display.lcd_clear()
 
-        lcd_display.lcd_display_string("Calibrating slide!", 2, 1)
-        max_disp = calibrate_slide()
         lcd_display.lcd_clear()
-
         lcd_display.lcd_display_string("....", 2, 8)
         process_new_files()
 
         files = get_files()
         shuffle(files)
 
-        lcd_display.lcd_clear()
         switches_thread.start()
+
+        lcd_display.lcd_clear()
+        lcd_display.lcd_display_string("Calibrating slide!", 2, 1)
+        max_disp = calibrate_slide()
+        lcd_display.lcd_clear()
 
         first_file = True
 
