@@ -177,7 +177,7 @@ class SwitchesThread():
 
     def check_all_switches(self):
         while self.running:
-            sleep(.1)
+            sleep(.25)
             if not self.collision_detected:
                 check_collision(self)
             if GPIO.input(exit_button) == 1:
@@ -270,6 +270,8 @@ def main():
                 lcd_display.lcd_display_string("Erasing Drawing!", 2, 2)
 
                 switches.collision_detected = True
+                M_Rot.running = True
+                M_Lin.running = True
 
                 if round(track[0][1] / get_max_disp()) > 0:
                     erase_in_to_out()
