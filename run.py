@@ -223,7 +223,7 @@ def check_collision(thread):
 # Stops the motors and LED strip, and joins the threads
 def stop_program(shutdown=False):
     lcd_display.lcd_clear()
-    lcd_display.lcd_display_string("  Program stopped!  ", 2)
+    lcd_display.lcd_display_string("Program stopped!", 2, 2)
 
     stop_motors()
 
@@ -236,6 +236,10 @@ def stop_program(shutdown=False):
     GPIO.cleanup()
 
     if shutdown:
+        lcd_display.lcd_clear()
+        lcd_display.lcd_display_string("Shutting down...", 2, 2)
+        sleep(1)
+        lcd_display.lcd_clear()
         call("sudo shutdown -h now", shell=True)
     else:
         print("Exiting...")
