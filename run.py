@@ -138,6 +138,7 @@ def calibrate_slide():
 
 def erase_out_to_in():
     M_Lin.turn_until_switch(Dir='forward', limit_switch=outer_switch, stepdelay=0.0002)
+    print("Found edge")
 
     MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.0002,))
     MLin = threading.Thread(target=run_MLin_until, args=(max_disp + outer_to_max, 0.1,))
@@ -152,6 +153,7 @@ def erase_out_to_in():
 
 def erase_in_to_out():
     M_Lin.turn_until_switch(Dir='backward', limit_switch=inner_switch, stepdelay=0.0002)
+    print("Found edge")
 
     MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.0002,))
     MLin = threading.Thread(target=run_MLin_until, args=(-max_disp - center_to_min, 0.1,))
@@ -176,7 +178,8 @@ class SwitchesThread():
     def check_all_switches(self):
         while self.running:
             sleep(.1)
-            check_collision(self)
+            if not self.collision_detected:
+                check_collision(self)
             if GPIO.input(exit_button) == 1:
                 # Shutdown
                 print("Shutdown pressed!")
@@ -266,10 +269,14 @@ def main():
                 lcd_display.lcd_clear()
                 lcd_display.lcd_display_string("Erasing Drawing!", 2, 2)
 
+                switches.collision_detected = True
+
                 if round(track[0][1] / get_max_disp()) > 0:
                     erase_in_to_out()
                 else:
                     erase_out_to_in()
+
+                switches.collision_detected = False
 
             track = read_track(f)
 
