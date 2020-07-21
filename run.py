@@ -140,7 +140,7 @@ def calibrate_slide():
 
 def erase_out_to_in():
     M_Lin.turn_until_switch(Dir='forward', limit_switch=outer_switch, stepdelay=0.0002)
-    
+
     MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.0002,))
     MLin = threading.Thread(target=run_MLin_until, args=(max_disp + outer_to_max, 0.1,))
 
@@ -154,7 +154,7 @@ def erase_out_to_in():
 
 def erase_in_to_out():
     M_Lin.turn_until_switch(Dir='backward', limit_switch=inner_switch, stepdelay=0.0002)
-    
+
     MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.0002,))
     MLin = threading.Thread(target=run_MLin_until, args=(-max_disp - center_to_min, 0.1,))
 
@@ -196,13 +196,6 @@ def check_collision():
         stop_motors()
 
 
-def update_LCD(filename, step, track_size):
-    lcd_display.lcd_clear()
-    lcd_display.lcd_display_string("Currently running:", 1)
-    lcd_display.lcd_display_string(filename, 2)
-    lcd_display.lcd_display_string("Progress: {}/{}".format(step, track_size), 4)
-
-
 # def check_button():
 #     if GPIO.input(exit_button) == 0
 
@@ -222,11 +215,11 @@ def main():
         LStrip.start()
         lcd_display.lcd_clear()
 
-        lcd_display.lcd_display_string(" Calibrating slide! ", 2)
+        lcd_display.lcd_display_string("Calibrating slide!", 2, 1)
         max_disp = calibrate_slide()
         lcd_display.lcd_clear()
 
-        lcd_display.lcd_display_string("        ....        ", 2)
+        lcd_display.lcd_display_string("....", 2, 8)
         process_new_files()
 
         files = get_files()
@@ -241,34 +234,38 @@ def main():
 
             if not first_file:
                 lcd_display.lcd_clear()
-                lcd_display.lcd_display_string("  Erasing Drawing!  ", 2)
+                lcd_display.lcd_display_string("Erasing Drawing!", 2, 2)
 
                 if round(track[0][1] / get_max_disp()) > 0:
                     erase_in_to_out()
                 else:
                     erase_out_to_in()
 
+                lcd_display.lcd_display_string("Currently running:", 1)
+                lcd_display.lcd_display_string(f, 2)
+                lcd_display.lcd_display_string("Progress: ", 4)
+
             for i, step in enumerate(track):
                 print(step)
+
+                lcd_display.lcd_display_string("          ".format(step, track_size), 4, 10)
+                lcd_display.lcd_display_string("{}/{}".format(step, track_size), 4, 10)
 
                 MLin_done = False
 
                 # Create motor threads
                 MRot = threading.Thread(target=run_MRot, args=(step[0], step[2],))
                 MLin = threading.Thread(target=run_MLin, args=(step[1], step[3],))
-                LCD = threading.Thread(target=update_LCD, args=(f, i+1, track.shape[0],))
 
                 print("...")
                 MRot.start()
                 MLin.start()
-                LCD.start()
 
                 while not MLin_done:
                     check_collision()
 
                 MRot.join()
                 MLin.join()
-                LCD.join()
 
             first_file = False
 
