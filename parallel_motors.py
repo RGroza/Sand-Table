@@ -43,7 +43,7 @@ class MotorThreads:
         M_Lin.stop()
         self.running = False
 
-delays = [0.0002, 0.0001]
+delays = [0.0001, 0.0002]
 
 try:
     GPIO.output(23, GPIO.LOW)
