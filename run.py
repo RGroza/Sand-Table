@@ -12,8 +12,6 @@ from utils.process_files import get_files, process_new_files, read_track, get_ma
 from utils.i2c_lcd_driver import *
 
 
-MLin_done = False
-
 # Motor driver object init
 M_Rot = DRV8825(dir_pin=13, step_pin=19, enable_pin=12, mode_pins=(16, 17, 20))
 M_Lin = DRV8825(dir_pin=24, step_pin=18, enable_pin=4, mode_pins=(21, 22, 27))
@@ -74,8 +72,9 @@ def run_MRot(steps, delay):
             M_Rot.turn_steps(Dir='backward', steps=abs(steps), stepdelay=delay)
 
     M_Rot.stop()
+    M_Rot.running = False
 
-    print("M_Rot done!")
+    # print("M_Rot done!")
 
 
 def run_MRot_until(Dir, delay):
@@ -96,9 +95,9 @@ def run_MLin(steps, delay):
             M_Lin.turn_steps(Dir='backward', steps=abs(steps), stepdelay=delay)
 
     M_Lin.stop()
-    MLin_done = True
+    M_Lin.running = False
 
-    print("M_Lin done!")
+    # print("M_Lin done!")
 
 
 def run_MLin_until(steps, delay):
@@ -248,17 +247,17 @@ def main():
                 lcd_display.lcd_display_string("          ", 4, 10)
                 lcd_display.lcd_display_string("{}/{}".format(i+1, track.shape[0]), 4, 10)
 
-                MLin_done = False
-
                 # Create motor threads
                 MRot = threading.Thread(target=run_MRot, args=(step[0], step[2],))
                 MLin = threading.Thread(target=run_MLin, args=(step[1], step[3],))
 
                 print("...")
+                M_Rot.running = True
+                M_Lin.running = True
                 MRot.start()
                 MLin.start()
 
-                while not MLin_done:
+                while M_Lin.running:
                     check_collision()
 
                 MRot.join()
