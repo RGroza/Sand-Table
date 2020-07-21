@@ -143,7 +143,7 @@ def erase_out_to_in():
     print("Found edge")
 
     sleep(.5)
-    MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.00025,))
+    MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.00035,))
     MLin = threading.Thread(target=run_MLin_until, args=(-max_disp, 0.01,))
 
     print("Erasing...")
@@ -161,7 +161,7 @@ def erase_in_to_out():
     print("Found edge")
 
     sleep(.5)
-    MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.00025,))
+    MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.00035,))
     MLin = threading.Thread(target=run_MLin_until, args=(max_disp, 0.01,))
 
     print("Erasing...")
@@ -324,6 +324,7 @@ def main():
                 switches.collision_detected = False
 
             print("3")
+            print("Running: {}".format(f))
             lcd_display.lcd_clear()
             lcd_display.lcd_display_string("Reading file....", 2)
             lcd_display.lcd_display_string(f, 3)
