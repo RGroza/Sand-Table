@@ -104,7 +104,7 @@ def run_MLin(steps, delay):
 
 def run_MLin_until(steps, delay):
     run_MLin(steps, delay)
-    M_Rot.running = True
+    M_Rot.running = False
 
 
 # Calibrates the linear slide arm before starting the main program routine
@@ -175,7 +175,7 @@ class SwitchesThread():
 
     def check_all_switches(self):
         while self.running:
-            sleep(.5)
+            sleep(.1)
             check_collision(self)
             if GPIO.input(exit_button) == 1:
                 # Shutdown
@@ -262,8 +262,6 @@ def main():
         first_file = True
 
         for f in files:
-            track = read_track(f)
-
             if not first_file:
                 lcd_display.lcd_clear()
                 lcd_display.lcd_display_string("Erasing Drawing!", 2, 2)
@@ -272,6 +270,8 @@ def main():
                     erase_in_to_out()
                 else:
                     erase_out_to_in()
+
+            track = read_track(f)
 
             lcd_display.lcd_display_string("Currently running:", 1)
             lcd_display.lcd_display_string(f, 2)
