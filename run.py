@@ -142,7 +142,7 @@ def erase_out_to_in():
 
     sleep(.5)
     MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.00015,))
-    MLin = threading.Thread(target=run_MLin_until, args=(max_disp + outer_to_max, 0.05,))
+    MLin = threading.Thread(target=run_MLin_until, args=(-max_disp - outer_to_max, 0.01,))
 
     print("Erasing...")
     MRot.start()
@@ -158,7 +158,7 @@ def erase_in_to_out():
 
     sleep(.5)
     MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.00015,))
-    MLin = threading.Thread(target=run_MLin_until, args=(-max_disp - center_to_min, 0.05,))
+    MLin = threading.Thread(target=run_MLin_until, args=(max_disp + center_to_min, 0.01,))
 
     print("Erasing...")
     MRot.start()
