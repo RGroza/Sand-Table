@@ -43,8 +43,6 @@ center_to_min = 250
 outer_to_max = 250
 max_disp = 0
 
-collision_detected = False
-
 
 # Run through the LED strip routine
 def run_LedStrip():
@@ -170,17 +168,18 @@ class SwitchesThread():
 
     def __init__(self):
         self.running = True
+        self.collision_detected = False
 
 
     def check_all_switches(self):
         while self.running:
-            check_collision()
+            check_collision(self)
             if GPIO.input(exit_button) == 1:
                 # Shutdown
                 continue
 
 
-def check_collision():
+def check_collision(thread):
     if GPIO.input(inner_switch) == 0 or GPIO.input(outer_switch) == 0:
         pressed = True
 
@@ -193,7 +192,7 @@ def check_collision():
             lcd_display.lcd_display_string("Collision Detected", 2, 1)
 
             stop_motors()
-            collision_detected = True
+            thread.collision_detected = True
 
 
 # Stops the motors and LED strip, and joins the threads
@@ -206,6 +205,9 @@ def stop_program():
     strip_thread.running = False
     strip_thread.colorWipe(strip, Color(0, 0, 0))
     LStrip.join()
+
+    switches.running = False
+    switches_thread.join()
 
     GPIO.cleanup()
     print("Exiting...")
@@ -221,10 +223,10 @@ def stop_motors():
 
 
 # Switches thread object init
-switches_thread = SwitchesThread()
+switches = SwitchesThread()
 
 # Create switches thread
-switched_thread = threading.Thread(target=switches_thread.check_all_switches)
+switches_thread = threading.Thread(target=switches.check_all_switches)
 
 # Create LStrip thread
 LStrip = threading.Thread(target=run_LedStrip)
@@ -241,6 +243,8 @@ def main():
         lcd_display.lcd_display_string("Calibrating slide!", 2, 1)
         max_disp = calibrate_slide()
         lcd_display.lcd_clear()
+
+        switches_thread.start()
 
         lcd_display.lcd_display_string("....", 2, 8)
         process_new_files()
@@ -287,7 +291,7 @@ def main():
                 MRot.join()
                 MLin.join()
 
-                if collision_detected:
+                if switches.collision_detected:
                     break
 
                 print("Motors done!")
