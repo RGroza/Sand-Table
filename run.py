@@ -48,15 +48,18 @@ max_disp = 0
 def run_LedStrip():
     strip.begin()
 
+    if not strip_thread.running: return
     print('LED Color wipe')
     strip_thread.colorWipe(strip, Color(255, 0, 0))  # Red wipe
     strip_thread.colorWipe(strip, Color(0, 255, 0))  # Blue wipe
     strip_thread.colorWipe(strip, Color(0, 0, 255))  # Green wipe
     print('LED Theater chase')
+    if not strip_thread.running: return
     strip_thread.theaterChase(strip, Color(127, 127, 127))  # White theater chase
     strip_thread.theaterChase(strip, Color(127, 0, 0))  # Red theater chase
     strip_thread.theaterChase(strip, Color(0, 0, 127))  # Blue theater chase
     print('LED Rainbow animations')
+    if not strip_thread.running: return
     strip_thread.rainbow(strip)
     strip_thread.rainbowCycle(strip)
     strip_thread.theaterChaseRainbow(strip)
