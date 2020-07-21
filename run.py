@@ -185,7 +185,7 @@ class SwitchesThread():
             if GPIO.input(exit_button) == 1:
                 # Shutdown
                 print("Shutdown pressed!")
-                continue
+                stop_program()
 
 
 def check_collision(thread):
