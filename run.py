@@ -181,10 +181,9 @@ class SwitchesThread():
 
 def check_collision(thread):
     if GPIO.input(inner_switch) == 0 or GPIO.input(outer_switch) == 0:
-        pressed = True
-
         if not pressed:
             start_time = int(round(time.time() * 1000))
+            pressed = True
 
         if int(round(time.time() * 1000)) - start_time > 2000:
             print("\n---------- Collision Detected! ----------")
