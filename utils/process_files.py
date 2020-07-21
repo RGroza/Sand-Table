@@ -11,6 +11,10 @@ pending_folder = "pending/"
 processed_folder = "processed/"
 
 
+def get_max_disp():
+    return max_disp
+
+
 def get_files(folder=processed_folder):
     onlyfiles = [f for f in listdir(folder) if isfile(join(folder, f))]
     print("Tracks found: " + str(onlyfiles).replace('[', '').replace(']', ''))
