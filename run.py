@@ -168,6 +168,7 @@ class SwitchesThread():
 
     def __init__(self):
         self.running = True
+        self.pressed = False
         self.collision_detected = False
 
 
@@ -181,9 +182,9 @@ class SwitchesThread():
 
 def check_collision(thread):
     if GPIO.input(inner_switch) == 0 or GPIO.input(outer_switch) == 0:
-        if not pressed:
+        if not thread.pressed:
             start_time = int(round(time.time() * 1000))
-            pressed = True
+            thread.pressed = True
 
         if int(round(time.time() * 1000)) - start_time > 2000:
             print("\n---------- Collision Detected! ----------")
@@ -291,6 +292,7 @@ def main():
                 MLin.join()
 
                 if switches.collision_detected:
+                    switches.pressed = False
                     break
 
                 print("Motors done!")
