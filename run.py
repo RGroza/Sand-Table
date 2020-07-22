@@ -249,6 +249,7 @@ def stop_program(shutdown=False):
         lcd_display.lcd_display_string("before restarting!", 3, 1)
         sleep(3)
         lcd_display.lcd_clear()
+        lcd_display.backlight(0)
 
         call("sudo shutdown -h now", shell=True)
     else:
@@ -279,6 +280,8 @@ def main():
     global max_disp
 
     try:
+        lcd_display.backlight(1)
+
         GPIO.output(motor_relay, GPIO.LOW)
         GPIO.output(led_relay, GPIO.LOW)
 
