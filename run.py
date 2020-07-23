@@ -172,6 +172,15 @@ def erase_in_to_out():
     MLin.join()
 
 
+def wait_for_erase():
+    lcd_display.lcd_clear()
+    lcd_display.lcd_display_string("Drawing will be", 2, 2)
+    lcd_display.lcd_display_string("erased in... ", 2, 2)
+    for i in range(60):
+        lcd_display.lcd_display_string(str(60 - i), 2, 17)
+        sleep(1)
+
+
 class SwitchesThread():
 
     def __init__(self):
@@ -306,9 +315,6 @@ def main():
 
         if len(files) == 0:
             lcd_display.lcd_display_string("Files not found!", 2, 2)
-            # lcd_display.lcd_display_string("Shutting Down...", 3, 2)
-            # sleep(5)
-            # stop_program(shutdown=True)
 
         first_file = True
 
@@ -319,6 +325,8 @@ def main():
                     break
 
                 if not first_file:
+                    wait_for_erase()
+
                     lcd_display.lcd_clear()
                     lcd_display.lcd_display_string("Erasing Drawing!", 2, 2)
 
