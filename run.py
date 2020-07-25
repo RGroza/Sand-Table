@@ -246,7 +246,7 @@ def ask_for_erase():
     interface.currently_displayed.clear()
     lcd_display.lcd_clear()
 
-    interface.next_drawing = True
+    interface.erase = True
     return yes_or_no
 
 
@@ -262,6 +262,7 @@ class InterfaceThread():
         self.stop_program = False
         self.displaying_options = False
         self.next_drawing = False
+        self.erase = False
         self.ask_erase = False
 
         self.options = {0: "Back", 1: "Shutdown", 2: "Stop/erase"}
@@ -461,10 +462,11 @@ def main():
                     break
 
                 if not first_file:
-                    if not interface.next_drawing:
+                    if not interface.erase and not interface.next_drawing:
                         wait_for_erase()
                     else:
                         interface.next_drawing = False
+                        interface.erase = False
 
                     erase_out_to_in()
 
