@@ -265,7 +265,7 @@ class InterfaceThread():
         while self.running:
             sleep(.1)
 
-            if not ask_erase:
+            if not self.ask_erase:
                 if not self.main_pressed and GPIO.input(main_button) == 1:
                     self.main_pressed = True
                     self.main_start_time = int(round(time.time() * 1000))
