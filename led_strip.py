@@ -112,7 +112,7 @@ def strip_init():
 if __name__ == '__main__':
     GPIO.output(led_relay, GPIO.LOW)
 
-    sleep(.5)
+    time.sleep(.5)
 
     # Process arguments
     parser = argparse.ArgumentParser()
