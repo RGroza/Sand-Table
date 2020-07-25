@@ -4,6 +4,7 @@ import time
 
 
 main_button = 26
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(main_button, GPIO.IN)
 
 lcd_display = lcd()
