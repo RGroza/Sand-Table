@@ -140,7 +140,7 @@ def erase_out_to_in():
     lcd_display.lcd_clear()
     lcd_display.lcd_display_string("Erasing Drawing!", 2, 2)
 
-    switches.collision_detected = True
+    interface.collision_detected = True
     M_Rot.running = True
     M_Lin.running = True
 
@@ -150,7 +150,7 @@ def erase_out_to_in():
     print("Found edge")
 
     sleep(.5)
-    MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.00035,))
+    MRot = threading.Thread(target=run_MRot_until, args=('forward', 0.0005,))
     MLin = threading.Thread(target=run_MLin_until, args=(-max_disp, 0.01,))
 
     print("Erasing...")
@@ -160,7 +160,7 @@ def erase_out_to_in():
     MRot.join()
     MLin.join()
 
-    switches.collision_detected = False
+    interface.collision_detected = False
 
 
 # def erase_in_to_out():
@@ -211,7 +211,7 @@ class InterfaceThread():
             sleep(.1)
 
             if not self.collision_detected:
-                check_collision(self)
+                self.check_collision()
 
             if GPIO.input(main_button) == 1:
                 if not self.main_pressed:
@@ -220,18 +220,18 @@ class InterfaceThread():
 
             if not self.displaying_options:
                 if self.main_pressed and GPIO.input(main_button) == 0:
-                    if int(round(time.time() * 1000)) - thread.collision_start_time > 4000:
+                    if int(round(time.time() * 1000)) - self.collision_start_time > 4000:
                         self.stop_program = True
                         self.running = False
                         stop_motors()
                     else:
                         self.displaying_options = True
                         self.main_pressed = False
-                        display_options()
+                        self.display_options()
             else:
                 if self.main_pressed and GPIO.input(main_button) == 0:
-                    if int(round(time.time() * 1000)) - thread.collision_start_time > 2000:
-                        select_option()
+                    if int(round(time.time() * 1000)) - self.collision_start_time > 2000:
+                        self.select_option()
                     else:
                         self.selected_option = (self.selected_option + 1) % 3
 
@@ -257,12 +257,12 @@ class InterfaceThread():
     def display_options(self):
         for o in self.options:
             if o == self.selected_option:
-                lcd_display.lcd_display_string("[ {} ]".format(options[o]), o, round((16 - len(options[o])) / 2))
+                lcd_display.lcd_display_string("[ {} ]".format(self.options[o]), o, round((16 - len(self.options[o])) / 2))
             else:
-                lcd_display.lcd_display_string(options[o], o, round((20 - len(options[o])) / 2))
+                lcd_display.lcd_display_string(self.options[o], o, round((20 - len(self.options[o])) / 2))
 
 
-    def select_option():
+    def select_option(self):
         if self.selected_option == 0:
             self.displaying_options = False
         elif self.selected_option == 1:
@@ -270,7 +270,7 @@ class InterfaceThread():
             self.running = False
             stop_motors()
         else:
-            next_drawing = True
+            self.next_drawing = True
             stop_motors()
 
 
@@ -290,7 +290,7 @@ def stop_program(shutdown=False):
     LStrip.join()
 
     interface.running = False
-    interface.join()
+    interface_thread.join()
 
     if shutdown:
         sleep(2)
@@ -372,7 +372,8 @@ def main():
                     break
 
                 if not first_file:
-                    wait_for_erase()
+                    if not interface.next_drawing:
+                        wait_for_erase()
                     erase_out_to_in()
 
                     if interface.stop_program:
