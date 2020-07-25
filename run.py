@@ -368,8 +368,9 @@ def main():
         if not interface.displaying_options:
             lcd_display.lcd_clear()
             lcd_display.lcd_display_string("Calibrating slide!", 2, 1)
-            interface.currently_displayed.clear()
-            interface.currently_displayed.extend((("Calibrating slide!", 2, 1)))
+
+        interface.currently_displayed.clear()
+        interface.currently_displayed.extend((("Calibrating slide!", 2, 1)))
 
         max_disp = calibrate_slide()
 
@@ -378,6 +379,8 @@ def main():
 
         if len(files) == 0:
             lcd_display.lcd_display_string("Files not found!", 2, 2)
+            interface.currently_displayed.clear()
+            interface.currently_displayed.extend((("Files not found!", 2, 2)))
 
         first_file = True
 
@@ -400,40 +403,50 @@ def main():
                     lcd_display.lcd_clear()
                     lcd_display.lcd_display_string("Reading file....", 2)
                     lcd_display.lcd_display_string(f, 3)
-                    interface.currently_displayed.clear()
-                    interface.currently_displayed.append((("Reading file....", 2, 0), (f, 3, 0)))
+
+                interface.currently_displayed.clear()
+                interface.currently_displayed.extend((("Reading file....", 2, 0), (f, 3, 0)))
 
                 track = read_track(f, Dir="/home/pi/Sand-Table/")
 
                 if not interface.displaying_options:
                     lcd_display.lcd_clear()
 
-                prog_disp_interrupted = False
+                # prog_disp_interrupted = False
 
                 if not interface.displaying_options:
                     lcd_display.lcd_display_string("Currently running:", 1)
                     lcd_display.lcd_display_string(f, 2)
                     lcd_display.lcd_display_string("Progress: ", 4)
-                    interface.currently_displayed.clear()
-                    interface.currently_displayed.append((("Currently running:", 1, 0), (f, 2, 0), ("Progress: ", 4, 0)))
-                else:
-                    prog_disp_interrupted = True
+                # else:
+                #     prog_disp_interrupted = True
+
+                interface.currently_displayed.clear()
+                interface.currently_displayed.extend((("Currently running:", 1, 0), (f, 2, 0), ("Progress: ", 4, 0)))
+
+                first_step = True
 
                 for i, step in enumerate(track):
                     print(step)
 
-                    if interface.displaying_options:
-                        prog_disp_interrupted = True
+                    # if interface.displaying_options:
+                    #     prog_disp_interrupted = True
 
-                    if prog_disp_interrupted and not interface.displaying_options:
-                        lcd_display.lcd_display_string("Currently running:", 1)
-                        lcd_display.lcd_display_string(f, 2)
-                        lcd_display.lcd_display_string("Progress: ", 4)
-                        prog_disp_interrupted = False
+                    # if prog_disp_interrupted and not interface.displaying_options:
+                    #     lcd_display.lcd_display_string("Currently running:", 1)
+                    #     lcd_display.lcd_display_string(f, 2)
+                    #     lcd_display.lcd_display_string("Progress: ", 4)
+                    #     prog_disp_interrupted = False
 
                     if not interface.displaying_options:
                         lcd_display.lcd_display_string("          ", 4, 10)
                         lcd_display.lcd_display_string("{}/{}".format(i+1, track.shape[0]), 4, 10)
+
+                    if first_step:
+                        interface.currently_displayed.extend((("          ", 4, 10), ("{}/{}".format(i+1, track.shape[0]), 4, 10)))
+                    else:
+                        interface.currently_displayed[3] = ("          ", 4, 10)
+                        interface.currently_displayed[4] = ("{}/{}".format(i+1, track.shape[0]), 4, 10)
 
                     # Create motor threads
                     MRot = threading.Thread(target=run_MRot, args=(step[0], step[2],))
@@ -455,9 +468,11 @@ def main():
                     if interface.stop_program or interface.next_drawing:
                         break
 
-                    print("Motors done!")
+                    # print("Motors done!")
+                    first_step = False
 
                 first_file = False
+                interface.currently_displayed.clear()
 
         if interface.stop_program:
             stop_program(shutdown=True)
