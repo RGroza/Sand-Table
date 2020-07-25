@@ -66,6 +66,7 @@ class InterfaceThread():
 
     def select_option(self):
         if self.selected_option == 0:
+            lcd_display.lcd_clear()
             self.displaying_options = False
             print("Back")
         elif self.selected_option == 1:
