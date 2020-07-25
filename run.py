@@ -254,16 +254,18 @@ class InterfaceThread():
 
         if self.selected_option == 0:
             print("Back")
+            if (len(self.currently_displayed) > 0):
+                for n in self.currently_displayed:
+                    lcd_display.lcd_display_string(n[0], n[1], n[2])
         elif self.selected_option == 1:
             self.stop_program = True
-            # self.running = False
+            self.running = False
             print("Shutdown!")
-            # stop_motors()
+            stop_motors()
         else:
             self.next_drawing = True
             print("Erasing!")
-
-        lcd_display.lcd_display_string(self.options[self.selected_option], self.selected_option + 1, round((20 - len(self.options[self.selected_option])) / 2))
+            lcd_display.lcd_clear()
 
 
     def check_collision(self):
@@ -366,7 +368,11 @@ def main():
         if not interface.displaying_options:
             lcd_display.lcd_clear()
             lcd_display.lcd_display_string("Calibrating slide!", 2, 1)
+            interface.currently_displayed.clear()
+            interface.currently_displayed.extend((("Calibrating slide!", 2, 1)))
+
         max_disp = calibrate_slide()
+
         if not interface.displaying_options:
             lcd_display.lcd_clear()
 
@@ -394,8 +400,11 @@ def main():
                     lcd_display.lcd_clear()
                     lcd_display.lcd_display_string("Reading file....", 2)
                     lcd_display.lcd_display_string(f, 3)
-                    interface.currently_displayed.append(("Reading file....", 2, None), (f, 3, None))
+                    interface.currently_displayed.clear()
+                    interface.currently_displayed.append((("Reading file....", 2, 0), (f, 3, 0)))
+
                 track = read_track(f, Dir="/home/pi/Sand-Table/")
+
                 if not interface.displaying_options:
                     lcd_display.lcd_clear()
 
@@ -405,6 +414,8 @@ def main():
                     lcd_display.lcd_display_string("Currently running:", 1)
                     lcd_display.lcd_display_string(f, 2)
                     lcd_display.lcd_display_string("Progress: ", 4)
+                    interface.currently_displayed.clear()
+                    interface.currently_displayed.append((("Currently running:", 1, 0), (f, 2, 0), ("Progress: ", 4, 0)))
                 else:
                     prog_disp_interrupted = True
 
