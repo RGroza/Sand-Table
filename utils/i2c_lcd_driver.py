@@ -127,6 +127,7 @@ class lcd:
 
    # put string function with optional char positioning
    def lcd_display_string(self, string, line=1, pos=0):  
+    pos_new = 0
     if line == 1:
       pos_new = pos
     elif line == 2:
