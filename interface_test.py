@@ -51,7 +51,8 @@ class InterfaceThread():
                 if GPIO.input(main_button) == 0 and int(round(time.time() * 1000)) - self.main_start_time > 2000:
                     self.main_pressed = False
                     self.select_option()
-                else:
+
+                if GPIO.input(main_button) == 0:
                     self.main_pressed = False
                     self.selected_option = (self.selected_option + 1) % 3
                     self.display_options()
