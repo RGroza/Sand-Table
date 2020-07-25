@@ -189,13 +189,13 @@ def wait_for_erase():
     if not interface.displaying_options:
         lcd_display.lcd_clear()
         lcd_display.lcd_display_string("Drawing will be", 2, 2)
-        lcd_display.lcd_display_string("erased in... ", 2, 2)
+        lcd_display.lcd_display_string("erased in... ", 3, 2)
 
     interface.currently_displayed.clear()
-    interface.currently_displayed.extend((("Drawing will be", 2, 2), ("erased in... ", 2, 2)))
+    interface.currently_displayed.extend((("Drawing will be", 2, 2), ("erased in... ", 3, 2)))
 
     for i in range(60):
-        lcd_display.lcd_display_string(str(60 - i), 2, 17)
+        lcd_display.lcd_display_string(str(60 - i), 3, 17)
         sleep(1)
 
 
@@ -459,6 +459,7 @@ def main():
                     break
 
                 first_file = not ask_for_erase()
+                interface.next_drawing = first_file
 
                 if not first_file:
                     if not interface.next_drawing:
