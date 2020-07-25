@@ -34,25 +34,28 @@ class InterfaceThread():
                 self.main_pressed = True
                 self.main_start_time = int(round(time.time() * 1000))
 
-            if not self.displaying_options:
-                if self.main_pressed and GPIO.input(main_button) == 0:
-                    if int(round(time.time() * 1000)) - self.main_start_time > 4000:
-                        self.stop_program = True
-                        self.running = False
-                        print("Shutdown!")
-                    else:
-                        self.displaying_options = True
-                        self.main_pressed = False
-                        self.display_options()
-            else:
-                if self.main_pressed and GPIO.input(main_button) == 0:
-                    if int(round(time.time() * 1000)) - self.main_start_time > 2000:
-                        self.select_option()
-                    else:
-                        self.selected_option = (self.selected_option + 1) % 3
-                        self.display_options()
-
+            if not self.displaying_options and self.main_pressed:
+                if GPIO.input(main_button) == 1 and int(round(time.time() * 1000)) - self.main_start_time > 3000:
                     self.main_pressed = False
+                    self.stop_program = True
+                    self.running = False
+                    print("Shutdown!")
+                    # stop_motors()
+
+                if self.main_pressed and GPIO.input(main_button) == 0:
+                    self.main_pressed = False
+                    self.displaying_options = True
+                    self.display_options()
+
+            if self.displaying_options and self.main_pressed:
+                if GPIO.input(main_button) == 1 and int(round(time.time() * 1000)) - self.main_start_time > 2000:
+                    self.main_pressed = False
+                    self.select_option()
+
+                if self.main_pressed and GPIO.input(main_button) == 0:
+                    self.main_pressed = False
+                    self.selected_option = (self.selected_option + 1) % 3
+                    self.display_options()
 
 
     def display_options(self):
@@ -73,9 +76,12 @@ class InterfaceThread():
             self.stop_program = True
             self.running = False
             print("Shutdown!")
+            # stop_motors()
         else:
             self.next_drawing = True
             print("Erasing!")
+
+        lcd_display.lcd_display_string(self.options[self.selected_option], self.selected_option + 1, round((20 - len(self.options[self.selected_option])) / 2))
 
 
 if __name__ == "__main__":
