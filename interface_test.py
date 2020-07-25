@@ -73,6 +73,7 @@ class InterfaceThread():
             self.next_drawing = True
             print("Erasing!")
 
+
 if __name__ == "__main__":
     interface = InterfaceThread()
     lcd_display.lcd_clear()
