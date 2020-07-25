@@ -221,11 +221,11 @@ def ask_for_erase():
                 interface.main_start_time = int(round(time.time() * 1000))
 
             if interface.main_pressed:
-                if GPIO.input(main_button) == 0 and int(round(time.time() * 1000)) - self.main_start_time > 1000:
-                    self.main_pressed = False
+                if GPIO.input(main_button) == 0 and int(round(time.time() * 1000)) - interface.main_start_time > 1000:
+                    interface.main_pressed = False
                     ask_erase = False
                 elif GPIO.input(main_button) == 0:
-                    self.main_pressed = False
+                    interface.main_pressed = False
                     yes_or_no = not yes_or_no
 
             if yes_or_no:
@@ -235,7 +235,8 @@ def ask_for_erase():
                 lcd_display.lcd_clear()
                 lcd_display.lcd_display_string("Yes/[No]", 3, 6)
 
-    self.main_pressed = False
+    interface.main_pressed = False
+    interface.currently_displayed.clear()
     lcd_display.lcd_clear()
 
     return yes_or_no
