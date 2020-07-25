@@ -199,6 +199,48 @@ def wait_for_erase():
         sleep(1)
 
 
+def ask_for_erase():
+    ask_erase = True
+    yes_or_no = True
+
+    if not interface.displaying_options:
+        lcd_display.lcd_clear()
+        lcd_display.lcd_display_string("Erase first?", 2, 4)
+        lcd_display.lcd_display_string("[Yes]/No", 3, 6)
+
+    interface.currently_displayed.clear()
+    interface.currently_displayed.extend((("Erase first?", 2, 4), ("[Yes]/No", 3, 6)))
+
+    interface.main_pressed = False
+
+    while ask_erase:
+            sleep(.1)
+
+            if not interface.main_pressed and GPIO.input(main_button) == 1:
+                interface.main_pressed = True
+                interface.main_start_time = int(round(time.time() * 1000))
+
+            if interface.main_pressed:
+                if GPIO.input(main_button) == 0 and int(round(time.time() * 1000)) - self.main_start_time > 1000:
+                    self.main_pressed = False
+                    ask_erase = False
+                elif GPIO.input(main_button) == 0:
+                    self.main_pressed = False
+                    yes_or_no = not yes_or_no
+
+            if yes_or_no:
+                lcd_display.lcd_clear()
+                lcd_display.lcd_display_string("[Yes]/No", 3, 6)
+            else:
+                lcd_display.lcd_clear()
+                lcd_display.lcd_display_string("Yes/[No]", 3, 6)
+
+    self.main_pressed = False
+    lcd_display.lcd_clear()
+
+    return yes_or_no
+
+
 class InterfaceThread():
 
     def __init__(self):
@@ -405,6 +447,8 @@ def main():
             for f in files:
                 if interface.stop_program:
                     break
+
+                first_file = not ask_for_erase()
 
                 if not first_file:
                     if not interface.next_drawing:
