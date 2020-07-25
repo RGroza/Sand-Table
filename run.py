@@ -195,7 +195,7 @@ def wait_for_erase():
     interface.currently_displayed.extend((("Drawing will be", 2, 2), ("erased in... ", 3, 2)))
 
     for i in range(60):
-        lcd_display.lcd_display_string(str(60 - i), 3, 17)
+        lcd_display.lcd_display_string(str(60 - i), 3, 15)
         sleep(1)
 
 
@@ -246,6 +246,7 @@ def ask_for_erase():
     interface.currently_displayed.clear()
     lcd_display.lcd_clear()
 
+    interface.next_drawing = True
     return yes_or_no
 
 
@@ -451,15 +452,13 @@ def main():
             interface.currently_displayed.extend((("Files not found!", 2, 2), (None)))
 
         first_file = True
+        first_file = not ask_for_erase()
 
         while not interface.stop_program:
 
             for f in files:
                 if interface.stop_program:
                     break
-
-                first_file = not ask_for_erase()
-                interface.next_drawing = first_file
 
                 if not first_file:
                     if not interface.next_drawing:
