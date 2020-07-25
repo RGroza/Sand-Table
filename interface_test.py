@@ -51,8 +51,7 @@ class InterfaceThread():
                 if GPIO.input(main_button) == 0 and int(round(time.time() * 1000)) - self.main_start_time > 2000:
                     self.main_pressed = False
                     self.select_option()
-
-                if GPIO.input(main_button) == 0:
+                elif GPIO.input(main_button) == 0:
                     self.main_pressed = False
                     self.selected_option = (self.selected_option + 1) % 3
                     self.display_options()
@@ -68,13 +67,14 @@ class InterfaceThread():
 
 
     def select_option(self):
+        lcd_display.lcd_clear()
+        self.displaying_options = False
+
         if self.selected_option == 0:
-            lcd_display.lcd_clear()
-            self.displaying_options = False
             print("Back")
         elif self.selected_option == 1:
             self.stop_program = True
-            self.running = False
+            # self.running = False
             print("Shutdown!")
             # stop_motors()
         else:
