@@ -265,7 +265,8 @@ class InterfaceThread():
             print("Back")
             if (len(self.currently_displayed) > 0):
                 for n in self.currently_displayed:
-                    lcd_display.lcd_display_string(n[0], n[1], n[2])
+                    if n != None:
+                        lcd_display.lcd_display_string(n[0], n[1], n[2])
         elif self.selected_option == 1:
             self.stop_program = True
             self.running = False
@@ -367,7 +368,7 @@ def main():
             lcd_display.lcd_display_string("....", 2, 8)
 
         interface.currently_displayed.clear()
-        interface.currently_displayed.extend((["....", 2, 8]))
+        interface.currently_displayed.extend((("....", 2, 8)))
 
         process_new_files(Dir="/home/pi/Sand-Table/")
 
@@ -384,7 +385,7 @@ def main():
             lcd_display.lcd_display_string("Calibrating slide!", 2, 1)
 
         interface.currently_displayed.clear()
-        interface.currently_displayed.extend((["Calibrating slide!", 2, 1]))
+        interface.currently_displayed.extend((("Calibrating slide!", 2, 1), (None)))
 
         max_disp = calibrate_slide()
 
@@ -394,7 +395,7 @@ def main():
         if len(files) == 0:
             lcd_display.lcd_display_string("Files not found!", 2, 2)
             interface.currently_displayed.clear()
-            interface.currently_displayed.extend((("Files not found!", 2, 2)))
+            interface.currently_displayed.extend((("Files not found!", 2, 2), (None)))
 
         first_file = True
 
