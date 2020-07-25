@@ -137,8 +137,12 @@ def calibrate_slide():
 
 
 def erase_out_to_in():
-    lcd_display.lcd_clear()
-    lcd_display.lcd_display_string("Erasing Drawing!", 2, 2)
+    if not interface.displaying_options():
+        lcd_display.lcd_clear()
+        lcd_display.lcd_display_string("Erasing Drawing!", 2, 2)
+
+    interface.currently_displayed.clear()
+    interface.currently_displayed.extend((("Erasing Drawing!", 2, 2)))
 
     interface.collision_detected = True
     M_Rot.running = True
@@ -182,9 +186,14 @@ def erase_out_to_in():
 
 
 def wait_for_erase():
-    lcd_display.lcd_clear()
-    lcd_display.lcd_display_string("Drawing will be", 2, 2)
-    lcd_display.lcd_display_string("erased in... ", 2, 2)
+    if not interface.displaying_options:
+        lcd_display.lcd_clear()
+        lcd_display.lcd_display_string("Drawing will be", 2, 2)
+        lcd_display.lcd_display_string("erased in... ", 2, 2)
+
+    interface.currently_displayed.clear()
+    interface.currently_displayed.extend((("Drawing will be", 2, 2), ("erased in... ", 2, 2)))
+
     for i in range(60):
         lcd_display.lcd_display_string(str(60 - i), 2, 17)
         sleep(1)
@@ -230,7 +239,7 @@ class InterfaceThread():
                     self.display_options()
 
             if self.displaying_options and self.main_pressed:
-                if GPIO.input(main_button) == 0 and int(round(time.time() * 1000)) - self.main_start_time > 2000:
+                if GPIO.input(main_button) == 0 and int(round(time.time() * 1000)) - self.main_start_time > 1000:
                     self.main_pressed = False
                     self.select_option()
                 elif GPIO.input(main_button) == 0:
@@ -353,8 +362,13 @@ def main():
 
         LStrip.start()
 
-        lcd_display.lcd_clear()
-        lcd_display.lcd_display_string("....", 2, 8)
+        if not interface.displaying_options:
+            lcd_display.lcd_clear()
+            lcd_display.lcd_display_string("....", 2, 8)
+
+        interface.currently_displayed.clear()
+        interface.currently_displayed.extend((("Calibrating slide!", 2, 1)))
+
         process_new_files(Dir="/home/pi/Sand-Table/")
 
         # files = get_files(Dir="/home/pi/Sand-Table/")
