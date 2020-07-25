@@ -137,7 +137,7 @@ def calibrate_slide():
 
 
 def erase_out_to_in():
-    if not interface.displaying_options():
+    if not interface.displaying_options:
         lcd_display.lcd_clear()
         lcd_display.lcd_display_string("Erasing Drawing!", 2, 2)
 
@@ -208,9 +208,9 @@ class InterfaceThread():
         self.limit_pressed = False
         self.main_pressed = False
         self.collision_detected = False
-        self.next_drawing = False
         self.stop_program = False
         self.displaying_options = False
+        self.next_drawing = False
 
         self.options = {0: "Back", 1: "Shutdown", 2: "Stop/erase"}
         self.selected_option = 0
@@ -276,6 +276,7 @@ class InterfaceThread():
             self.next_drawing = True
             print("Erasing!")
             lcd_display.lcd_clear()
+            stop_motors()
 
 
     def check_collision(self):
@@ -408,6 +409,9 @@ def main():
                 if not first_file:
                     if not interface.next_drawing:
                         wait_for_erase()
+                    else:
+                        interface.next_drawing = False
+
                     erase_out_to_in()
 
                     if interface.stop_program:
