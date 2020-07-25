@@ -20,6 +20,8 @@ LED_BRIGHTNESS = 255  # Set to 0 for darkest and 255 for brightest
 LED_INVERT = False    # True to invert the signal (when using NPN transistor level shift)
 LED_CHANNEL = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
+GPIO.setwarnings(False)
+
 led_relay = 25
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(led_relay, GPIO.OUT)
@@ -147,6 +149,6 @@ if __name__ == '__main__':
             strip_thread.theaterChaseRainbow(strip)
 
     except KeyboardInterrupt:
+        GPIO.output(led_relay, GPIO.HIGH)
         if args.clear:
             strip_thread.colorWipe(strip, Color(0, 0, 0), 10)
-            GPIO.output(led_relay, GPIO.HIGH)
