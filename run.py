@@ -258,9 +258,9 @@ class InterfaceThread():
     def display_options(self):
         for o in self.options:
             if o == self.selected_option:
-                lcd_display.lcd_display_string("[ {} ]".format(self.options[o]), o, round((16 - len(self.options[o])) / 2))
+                lcd_display.lcd_display_string("[ {} ]".format(self.options[o]), int(o), int(round((16 - len(self.options[o])) / 2)))
             else:
-                lcd_display.lcd_display_string(self.options[o], o, round((20 - len(self.options[o])) / 2))
+                lcd_display.lcd_display_string(self.options[o], int(o), int(round((20 - len(self.options[o])) / 2)))
 
 
     def select_option(self):
