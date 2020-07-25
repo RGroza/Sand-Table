@@ -142,7 +142,7 @@ def erase_out_to_in():
         lcd_display.lcd_display_string("Erasing Drawing!", 2, 2)
 
     interface.currently_displayed.clear()
-    interface.currently_displayed.extend((("Erasing Drawing!", 2, 2)))
+    interface.currently_displayed.extend((("Erasing Drawing!", 2, 2), (None)))
 
     interface.collision_detected = True
     M_Rot.running = True
