@@ -367,7 +367,7 @@ def main():
             lcd_display.lcd_display_string("....", 2, 8)
 
         interface.currently_displayed.clear()
-        interface.currently_displayed.extend((("Calibrating slide!", 2, 1)))
+        interface.currently_displayed.extend((["....", 2, 8]))
 
         process_new_files(Dir="/home/pi/Sand-Table/")
 
@@ -384,7 +384,7 @@ def main():
             lcd_display.lcd_display_string("Calibrating slide!", 2, 1)
 
         interface.currently_displayed.clear()
-        interface.currently_displayed.extend((("Calibrating slide!", 2, 1)))
+        interface.currently_displayed.extend((["Calibrating slide!", 2, 1]))
 
         max_disp = calibrate_slide()
 
