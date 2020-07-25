@@ -256,6 +256,7 @@ class InterfaceThread():
 
 
     def display_options(self):
+        lcd_display.lcd_clear()
         for o in self.options:
             if o == self.selected_option:
                 lcd_display.lcd_display_string("[ {} ]".format(self.options[o]), o + 1, round((16 - len(self.options[o])) / 2))
