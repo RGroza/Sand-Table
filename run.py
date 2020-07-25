@@ -202,10 +202,12 @@ def wait_for_erase():
 def ask_for_erase():
     interface.ask_erase = True
     yes_or_no = True
+    changed = False
 
-    lcd_display.lcd_clear()
-    lcd_display.lcd_display_string("Erase first?", 2, 4)
-    lcd_display.lcd_display_string("[Yes]/No", 3, 6)
+    if not interface.displaying_options
+        lcd_display.lcd_clear()
+        lcd_display.lcd_display_string("Erase first?", 2, 4)
+        lcd_display.lcd_display_string("[Yes]/No", 3, 6)
 
     interface.currently_displayed.clear()
     interface.currently_displayed.extend((("Erase first?", 2, 4), ("[Yes]/No", 3, 6)))
@@ -213,26 +215,32 @@ def ask_for_erase():
     interface.main_pressed = False
 
     while interface.ask_erase:
-            sleep(.1)
+        sleep(.1)
 
-            if not interface.main_pressed and GPIO.input(main_button) == 1:
-                interface.main_pressed = True
-                interface.main_start_time = int(round(time.time() * 1000))
+        if not interface.main_pressed and GPIO.input(main_button) == 1:
+            interface.main_pressed = True
+            interface.main_start_time = int(round(time.time() * 1000))
 
-            if interface.main_pressed:
-                if GPIO.input(main_button) == 0 and int(round(time.time() * 1000)) - interface.main_start_time > 1000:
-                    interface.main_pressed = False
-                    interface.ask_erase = False
-                elif GPIO.input(main_button) == 0:
-                    interface.main_pressed = False
-                    yes_or_no = not yes_or_no
+        if interface.main_pressed:
+            if GPIO.input(main_button) == 0 and int(round(time.time() * 1000)) - interface.main_start_time > 1000:
+                interface.main_pressed = False
+                interface.ask_erase = False
+            elif GPIO.input(main_button) == 0:
+                interface.main_pressed = False
+                yes_or_no = not yes_or_no
+                changed = True
 
+        if changed:
             if yes_or_no:
                 lcd_display.lcd_clear()
+                lcd_display.lcd_display_string("Erase first?", 2, 4)
                 lcd_display.lcd_display_string("[Yes]/No", 3, 6)
             else:
                 lcd_display.lcd_clear()
+                lcd_display.lcd_display_string("Erase first?", 2, 4)
                 lcd_display.lcd_display_string("Yes/[No]", 3, 6)
+
+            changed = False
 
     interface.main_pressed = False
     interface.currently_displayed.clear()
