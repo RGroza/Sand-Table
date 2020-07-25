@@ -203,10 +203,9 @@ def ask_for_erase():
     interface.ask_erase = True
     yes_or_no = True
 
-    if not interface.displaying_options:
-        lcd_display.lcd_clear()
-        lcd_display.lcd_display_string("Erase first?", 2, 4)
-        lcd_display.lcd_display_string("[Yes]/No", 3, 6)
+    lcd_display.lcd_clear()
+    lcd_display.lcd_display_string("Erase first?", 2, 4)
+    lcd_display.lcd_display_string("[Yes]/No", 3, 6)
 
     interface.currently_displayed.clear()
     interface.currently_displayed.extend((("Erase first?", 2, 4), ("[Yes]/No", 3, 6)))
