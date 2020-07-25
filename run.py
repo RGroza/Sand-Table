@@ -220,7 +220,7 @@ class InterfaceThread():
 
             if not self.displaying_options:
                 if self.main_pressed and GPIO.input(main_button) == 0:
-                    if int(round(time.time() * 1000)) - self.collision_start_time > 4000:
+                    if int(round(time.time() * 1000)) - self.main_start_time > 4000:
                         self.stop_program = True
                         self.running = False
                         stop_motors()
@@ -230,10 +230,11 @@ class InterfaceThread():
                         self.display_options()
             else:
                 if self.main_pressed and GPIO.input(main_button) == 0:
-                    if int(round(time.time() * 1000)) - self.collision_start_time > 2000:
+                    if int(round(time.time() * 1000)) - self.main_start_time > 2000:
                         self.select_option()
                     else:
                         self.selected_option = (self.selected_option + 1) % 3
+                        self.display_options()
 
 
     def check_collision(self):
