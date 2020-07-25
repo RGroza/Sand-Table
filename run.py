@@ -204,7 +204,7 @@ def ask_for_erase():
     yes_or_no = True
     changed = False
 
-    if not interface.displaying_options
+    if not interface.displaying_options:
         lcd_display.lcd_clear()
         lcd_display.lcd_display_string("Erase first?", 2, 4)
         lcd_display.lcd_display_string("[Yes]/No", 3, 6)
