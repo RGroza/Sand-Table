@@ -35,24 +35,23 @@ class InterfaceThread():
                 self.main_start_time = int(round(time.time() * 1000))
 
             if not self.displaying_options and self.main_pressed:
-                if GPIO.input(main_button) == 1 and int(round(time.time() * 1000)) - self.main_start_time > 3000:
-                    self.main_pressed = False
-                    self.stop_program = True
-                    self.running = False
-                    print("Shutdown!")
-                    # stop_motors()
+                # if GPIO.input(main_button) == 1 and int(round(time.time() * 1000)) - self.main_start_time > 3000:
+                #     self.main_pressed = False
+                #     self.stop_program = True
+                #     self.running = False
+                #     print("Shutdown!")
+                #     # stop_motors()
 
-                if self.main_pressed and GPIO.input(main_button) == 0:
+                if GPIO.input(main_button) == 0:
                     self.main_pressed = False
                     self.displaying_options = True
                     self.display_options()
 
             if self.displaying_options and self.main_pressed:
-                if GPIO.input(main_button) == 1 and int(round(time.time() * 1000)) - self.main_start_time > 2000:
+                if GPIO.input(main_button) == 0 and int(round(time.time() * 1000)) - self.main_start_time > 2000:
                     self.main_pressed = False
                     self.select_option()
-
-                if self.main_pressed and GPIO.input(main_button) == 0:
+                else:
                     self.main_pressed = False
                     self.selected_option = (self.selected_option + 1) % 3
                     self.display_options()
