@@ -200,7 +200,7 @@ def wait_for_erase():
 
 
 def ask_for_erase():
-    ask_erase = True
+    interface.ask_erase = True
     yes_or_no = True
 
     if not interface.displaying_options:
@@ -213,7 +213,7 @@ def ask_for_erase():
 
     interface.main_pressed = False
 
-    while ask_erase:
+    while interface.ask_erase:
             sleep(.1)
 
             if not interface.main_pressed and GPIO.input(main_button) == 1:
@@ -223,7 +223,7 @@ def ask_for_erase():
             if interface.main_pressed:
                 if GPIO.input(main_button) == 0 and int(round(time.time() * 1000)) - interface.main_start_time > 1000:
                     interface.main_pressed = False
-                    ask_erase = False
+                    interface.ask_erase = False
                 elif GPIO.input(main_button) == 0:
                     interface.main_pressed = False
                     yes_or_no = not yes_or_no
@@ -254,6 +254,7 @@ class InterfaceThread():
         self.stop_program = False
         self.displaying_options = False
         self.next_drawing = False
+        self.ask_erase = False
 
         self.options = {0: "Back", 1: "Shutdown", 2: "Stop/erase"}
         self.selected_option = 0
@@ -264,31 +265,32 @@ class InterfaceThread():
         while self.running:
             sleep(.1)
 
-            if not self.main_pressed and GPIO.input(main_button) == 1:
-                self.main_pressed = True
-                self.main_start_time = int(round(time.time() * 1000))
+            if not ask_erase:
+                if not self.main_pressed and GPIO.input(main_button) == 1:
+                    self.main_pressed = True
+                    self.main_start_time = int(round(time.time() * 1000))
 
-            if not self.displaying_options and self.main_pressed:
-                # if GPIO.input(main_button) == 1 and int(round(time.time() * 1000)) - self.main_start_time > 3000:
-                #     self.main_pressed = False
-                #     self.stop_program = True
-                #     self.running = False
-                #     print("Shutdown!")
-                #     # stop_motors()
+                if not self.displaying_options and self.main_pressed:
+                    # if GPIO.input(main_button) == 1 and int(round(time.time() * 1000)) - self.main_start_time > 3000:
+                    #     self.main_pressed = False
+                    #     self.stop_program = True
+                    #     self.running = False
+                    #     print("Shutdown!")
+                    #     # stop_motors()
 
-                if GPIO.input(main_button) == 0:
-                    self.main_pressed = False
-                    self.displaying_options = True
-                    self.display_options()
+                    if GPIO.input(main_button) == 0:
+                        self.main_pressed = False
+                        self.displaying_options = True
+                        self.display_options()
 
-            if self.displaying_options and self.main_pressed:
-                if GPIO.input(main_button) == 0 and int(round(time.time() * 1000)) - self.main_start_time > 1000:
-                    self.main_pressed = False
-                    self.select_option()
-                elif GPIO.input(main_button) == 0:
-                    self.main_pressed = False
-                    self.selected_option = (self.selected_option + 1) % 3
-                    self.display_options()
+                if self.displaying_options and self.main_pressed:
+                    if GPIO.input(main_button) == 0 and int(round(time.time() * 1000)) - self.main_start_time > 1000:
+                        self.main_pressed = False
+                        self.select_option()
+                    elif GPIO.input(main_button) == 0:
+                        self.main_pressed = False
+                        self.selected_option = (self.selected_option + 1) % 3
+                        self.display_options()
 
 
     def display_options(self):
