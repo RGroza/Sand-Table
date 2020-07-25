@@ -5,6 +5,7 @@
 # Direct port of the Arduino NeoPixel library strandtest example.  Showcases
 # various animations on a strip of NeoPixels.
 
+import RPi.GPIO as GPIO
 import time
 from rpi_ws281x import PixelStrip, Color
 import argparse
@@ -19,6 +20,9 @@ LED_BRIGHTNESS = 255  # Set to 0 for darkest and 255 for brightest
 LED_INVERT = False    # True to invert the signal (when using NPN transistor level shift)
 LED_CHANNEL = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
+led_relay = 25
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(led_relay, GPIO.OUT)
 
 class LedStripThread():
 
@@ -106,6 +110,10 @@ def strip_init():
 
 # Main program logic follows:
 if __name__ == '__main__':
+    GPIO.output(led_relay, GPIO.LOW)
+
+    sleep(.5)
+
     # Process arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--clear', action='store_true', help='clear the display on exit')
@@ -141,3 +149,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if args.clear:
             strip_thread.colorWipe(strip, Color(0, 0, 0), 10)
+            GPIO.output(led_relay, GPIO.HIGH)
